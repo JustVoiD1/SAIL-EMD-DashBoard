@@ -16,7 +16,7 @@ export default function Dashboard() {
   const globalStatsArray = [
     {
       id: 1,
-      title: 'Total Projects',
+      title: 'Total',
       value: 247,
       imageURL: '/icons/TotalIcon.svg'
     },
@@ -34,8 +34,8 @@ export default function Dashboard() {
     },
     {
       id: 4,
-      title: 'Success Rate',
-      value: 86,
+      title: 'Success',
+      value: "86%",
       imageURL: '/icons/SuccessRateIcon.svg'
     },
 
@@ -224,11 +224,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen min-w-screen bg-background">
       {/* Navigation Header */}
       <header className='sticky top-0 z-50'>
         <nav className="bg-card border-b border-border p-4">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="w-screen mx-auto flex justify-between items-center">
             <Image alt='logo' height={imagesize} width={imagesize} src={'SAIL_logo.svg'} />
 
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-800 bg-clip-text text-transparent">
@@ -270,11 +270,6 @@ export default function Dashboard() {
         <div className="bg-card/50 backdrop-blur-sm border-b border-border">
           <div className="max-w-7xl mx-auto p-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              {/* Global Stats */}
-              <div className="flex flex-wrap gap-4">
-                {globalStatsArray.map((item) => < GlobalStatCard key={item.id} imageURL={item.imageURL} title={item.title} value={item.value} />)}
-              </div>
-
               {/* Search Bar */}
               <div className="flex-shrink-0 lg:w-80">
                 <div className="relative">
@@ -295,6 +290,13 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+
+              {/* Global Stats */}
+              <div className="flex flex-wrap gap-4">
+                {globalStatsArray.map((item) => < GlobalStatCard key={item.id} imageURL={item.imageURL} title={item.title} value={item.value} />)}
+              </div>
+
+
             </div>
           </div>
         </div>

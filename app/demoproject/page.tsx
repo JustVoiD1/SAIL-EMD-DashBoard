@@ -87,7 +87,7 @@ export default function DemoProject() {
 
     return (
         <div className="min-h-screen bg-background">
-            <header className='w-screen flex justify-end border border-red-400 pr-3 pt-3'>
+            <header className='w-screen flex justify-end pr-3 pt-3'>
             {/* theme switch */}
                 <button
                     onClick={toggleDarkMode}
@@ -109,8 +109,8 @@ export default function DemoProject() {
                 </button>
             </header>
             <div className="mx-auto">
-                <h1 className="text-2xl font-bold text-foreground mb-6">Zero Liquid Discharge - RSP</h1>
-                <div className="bg-card border w-[50%] border-border rounded-xl p-6 shadow-lg">
+                <h1 className="text-2xl text-center font-bold text-foreground mb-6">Zero Liquid Discharge - RSP</h1>
+                <div className="bg-card border min-w-[50%] border-border rounded-xl p-6 shadow-lg">
                     <div style={{ width: '100%', height: 400 }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart
@@ -137,7 +137,7 @@ export default function DemoProject() {
                 </div>
 
 
-                <div className="bg-card border w-[50%] border-border rounded-xl p-6 shadow-lg">These are just a random bunch of words to describe the project</div>
+                <div className="bg-card border min-w-[50%] border-border rounded-xl p-6 shadow-lg">These are just a random bunch of words to describe the project</div>
             </div>
         </div>
     );
