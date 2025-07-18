@@ -5,18 +5,18 @@ import { jwtVerify } from 'jose';
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function middleware(request: NextRequest) {
-    console.log('🔍 Middleware running for:', request.nextUrl.pathname);
-    
+    // console.log('Middleware running for:', request.nextUrl.pathname);
+
     // Define public routes that don't require authentication
     const publicRoutes = ['/signin', '/signup'];
     const isPublicRoute = publicRoutes.includes(request.nextUrl.pathname);
-    
+
     // Get token from authorization header or cookie
     const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '') || 
-                 request.cookies.get('token')?.value;
-    
-    
+    const token = authHeader?.replace('Bearer ', '') ||
+        request.cookies.get('token')?.value;
+
+
 
     // If accessing a public route (signin/signup)
     if (isPublicRoute) {

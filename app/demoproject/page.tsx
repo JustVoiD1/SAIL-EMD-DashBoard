@@ -86,12 +86,13 @@ export default function DemoProject() {
 
 
     return (
-        <div className="min-h-screen bg-background">
-            <header className='w-screen flex justify-end pr-3 pt-3'>
-            {/* theme switch */}
+        <div className="min-h-screen bg-background overflow-x-hidden">
+            <header className='w-full flex items-center justify-between px-4 py-3'>
+                <h1 className="text-xl md:text-2xl font-bold text-foreground flex-1 text-center">Zero Liquid Discharge - RSP</h1>
+                {/* theme switch */}
                 <button
                     onClick={toggleDarkMode}
-                    className=" relative p-2 rounded-lg bg-background/20 border border-border hover:bg-background/30 transition-all duration-500 hover:scale-110 hover:rotate-12"
+                    className="p-2 rounded-lg bg-background/20 border border-border hover:bg-background/30 transition-all duration-500 hover:scale-110 hover:rotate-12 flex-shrink-0"
                     aria-label="Toggle dark mode"
                 >
                     <div className={`transition-all duration-700 ${isDarkMode ? 'rotate-0' : 'rotate-180'}`}>
@@ -108,11 +109,13 @@ export default function DemoProject() {
                     </div>
                 </button>
             </header>
-            <div className="mx-auto">
-                <h1 className="text-2xl text-center font-bold text-foreground mb-6">Zero Liquid Discharge - RSP</h1>
-                <div className="bg-card border min-w-[50%] border-border rounded-xl p-6 shadow-lg">
-                    <div style={{ width: '100%', height: 400 }}>
-                        <ResponsiveContainer width="100%" height="100%">
+            <div className="container mx-auto px-4 py-6">
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
+                    {/* Chart Section */}
+                    <div className="w-full lg:w-1/2 bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Project Analytics</h2>
+                        <div className="w-full aspect-[4/3] min-h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
                             <LineChart
                                 width={500}
                                 height={300}
@@ -133,11 +136,39 @@ export default function DemoProject() {
                                 <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                             </LineChart>
                         </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    {/* Description Section */}
+                    <div className="w-full lg:w-1/2 bg-card border border-border rounded-xl p-4 md:p-6 shadow-lg">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">Project Overview</h2>
+                        <div className="space-y-4 text-muted-foreground">
+                            <p className="leading-relaxed">
+                                The Zero Liquid Discharge project at Rourkela Steel Plant represents a comprehensive 
+                                approach to water management and environmental sustainability. This initiative focuses 
+                                on treating and recycling all wastewater generated within the plant.
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                                <div className="bg-muted/20 rounded-lg p-3">
+                                    <h3 className="font-medium text-foreground text-sm">Capacity</h3>
+                                    <p className="text-lg font-bold text-primary">1,900 m³/hr</p>
+                                </div>
+                                <div className="bg-muted/20 rounded-lg p-3">
+                                    <h3 className="font-medium text-foreground text-sm">Efficiency</h3>
+                                    <p className="text-lg font-bold text-green-600">95%</p>
+                                </div>
+                                <div className="bg-muted/20 rounded-lg p-3">
+                                    <h3 className="font-medium text-foreground text-sm">Status</h3>
+                                    <p className="text-lg font-bold text-orange-600">Ongoing</p>
+                                </div>
+                                <div className="bg-muted/20 rounded-lg p-3">
+                                    <h3 className="font-medium text-foreground text-sm">Target</h3>
+                                    <p className="text-lg font-bold text-blue-600">Q2 2025</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-
-                <div className="bg-card border min-w-[50%] border-border rounded-xl p-6 shadow-lg">These are just a random bunch of words to describe the project</div>
             </div>
         </div>
     );
