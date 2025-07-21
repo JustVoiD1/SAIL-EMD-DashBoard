@@ -1,0 +1,223 @@
+'use client'
+import React, { useState } from 'react'
+
+interface AddProjectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onProjectAdded: (project: any) => void;
+}
+
+const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    oneliner: '',
+    progress: 0,
+    start_date: '',
+    end_date: '',
+    image_url: '',
+    video_url: ''
+  });
+
+  const handleInputChange = (field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          onProjectAdded(result.project);
+          handleClose();
+          alert('Project created successfully!');
+        }
+      } else {
+        throw new Error('Failed to create project');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert('Failed to create project');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setFormData({
+      title: '',
+      oneliner: '',
+      progress: 0,
+      start_date: '',
+      end_date: '',
+      image_url: '',
+      video_url: ''
+    });
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={handleClose}
+      ></div>
+      
+      {/* Modal */}
+      <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Add New Project</h2>
+          <button
+            onClick={handleClose}
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
+          >
+            ❌
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Project Title *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.title}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter project title"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Description *
+            </label>
+            <textarea
+              required
+              rows={3}
+              value={formData.oneliner}
+              onChange={(e) => handleInputChange('oneliner', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              placeholder="Enter project description"
+            />
+          </div>
+
+          {/* Progress */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Progress (%)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={formData.progress}
+              onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="0"
+            />
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={formData.start_date}
+                onChange={(e) => handleInputChange('start_date', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={formData.end_date}
+                onChange={(e) => handleInputChange('end_date', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Media URLs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Image URL
+              </label>
+              <input
+                type="url"
+                value={formData.image_url}
+                onChange={(e) => handleInputChange('image_url', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Video URL
+              </label>
+              <input
+                type="url"
+                value={formData.video_url}
+                onChange={(e) => handleInputChange('video_url', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/video.mp4"
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex-1 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors"
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creating...' : 'Create Project'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddProjectModal;

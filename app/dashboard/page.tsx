@@ -7,6 +7,7 @@ import GlobalStatCard from '../components/GlobalStatCard';
 import { Project } from '@/lib/types';
 import SearchBar from '../components/SearchBar';
 import SearchResultList from '../components/SearchResultList';
+import AddProjectModal from '../components/AddProjectModal';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -14,46 +15,45 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [results, setResults] = useState<Project[]>([])
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
   const imagesize = 50
+
 
   const globalStatsArray = [
     {
       id: 1,
       title: 'Total',
-      value: 22,
+      value: results.length,
       imageURL: '/icons/TotalIcon.svg'
     },
     {
       id: 2,
       title: 'Ongoing',
-      value: 10,
+      value: results.filter((item) => item['progress'] < 100
+      ).length,
       imageURL: '/icons/OngoingIcon.svg'
     },
     {
       id: 3,
       title: 'Completed',
-      value: 12,
+      value: results.filter((it => it['progress'] === 100)).length,
       imageURL: '/icons/CompletedIcon.svg'
     },
-    {
-      id: 4,
-      title: 'Success',
-      value: "86%",
-      imageURL: '/icons/SuccessRateIcon.svg'
-    },
+    // {
+    //   id: 4,
+    //   title: 'Delivery Rate',
+    //   value: "86%",
+    //   imageURL: '/icons/SuccessRateIcon.svg'
+    // },
 
   ]
 
 
 
 
-  function SearchProject() {
-    
-
-
-
-
+  const handleProjectAdded = (newProject: any) => {
+    setResults(prev => [newProject, ...prev])
   }
 
 
@@ -130,6 +130,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background/50">
       {/* Navigation Header */}
       <header className='sticky top-0 z-50'>
+
         <nav className="bg-card border-b border-border p-4">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <Image alt='logo' height={imagesize} width={imagesize} src={'SAIL_logo.svg'} />
@@ -143,7 +144,7 @@ export default function Dashboard() {
                 className="py-3 px-4 text-center text-xs rounded-full bg-background/20 border border-border hover:bg-background/30 transition-all duration-500 hover:scale-110"
 
               >
-               {user.username[0].toUpperCase()} 
+                {user.username[0].toUpperCase()}
               </button>
               {/* Dark Mode Toggle */}
               <button
@@ -188,7 +189,7 @@ export default function Dashboard() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <SearchBar setResults={setResults}/>
+                  <SearchBar setResults={setResults} />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <kbd className="inline-flex items-center px-2 py-1 text-xs font-semibold text-muted-foreground bg-muted border border-border rounded">
                       Ctrl+K
@@ -197,10 +198,20 @@ export default function Dashboard() {
                 </div>
               </div>
 
+
+
+
               {/* Global Stats */}
               <div className="flex flex-wrap gap-4">
                 {globalStatsArray.map((item) => < GlobalStatCard key={item.id} imageURL={item.imageURL} title={item.title} value={item.value} />)}
               </div>
+
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              >
+                ➕ Add Project
+              </button>
             </div>
           </div>
         </div>
@@ -214,7 +225,7 @@ export default function Dashboard() {
           {/* {
             projectArray.map((project) => <ProjectCard title={project.title} oneliner={project.oneliner} key={project.id} />)
           } */}
-          <SearchResultList results = {results}/>
+          <SearchResultList results={results} />
 
 
           {/* <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
@@ -242,9 +253,15 @@ export default function Dashboard() {
           </div> */}
         </div>
 
-        
+
       </main>
+      <AddProjectModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onProjectAdded={handleProjectAdded}
+      />
     </div>
+
   );
 }
 
