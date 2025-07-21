@@ -120,9 +120,9 @@ const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAc
     const [isLoading, setIsLoading] = useState(false);
 
     // Initialize with all projects on component mount
-    useEffect(() => {
-        setResults(projectArray);
-    }, [setResults]);
+    // useEffect(() => {
+    //     setResults(projectArray);
+    // }, [setResults]);
 
 
     useEffect(() => {
@@ -132,7 +132,7 @@ const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAc
 
     const searchProjects = (inputVal: string) => {
         if (inputVal.trim() == '' || !inputVal) {
-            setResults(projectArray); // Fix: Always call setResults
+            setResults(allProjects); // Fix: Always call setResults
             return;
         } else {
             const inputLower = inputVal.toLowerCase();
@@ -152,15 +152,28 @@ const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAc
     const fetchProjects = async () => {
         setIsLoading(true);
         try {
+
+            const token = localStorage.getItem('token');
+
+            if(!token){
+                throw new Error('No token found');
+            }
             const response = await fetch('/api/projects', {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
                 },
 
             });
 
             if(!response.ok){
+                if(response.status === 401){
+                    //token expired, redirected to signin
+                    localStorage.removeItem('token');
+                    window.location.href = '/signin';
+                    return;
+                }
                 throw new Error('Failed Fetching projects')
             }
 
@@ -174,16 +187,16 @@ const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAc
             else{
                 console.error('API error', results.error)
 
-                setAllProjects(projectArray)
-                setResults(projectArray)
+                setAllProjects([])
+                setResults([])
             }
 
 
         } catch (error) {
             console.error('Error fetching projects:', error);
             // Fallback to local array if API fails
-            setAllProjects(projectArray);
-            setResults(projectArray);
+            setAllProjects([]);
+            setResults([]);
         } finally {
             setIsLoading(false);
         }

@@ -88,7 +88,7 @@ export default function DemoProject() {
     return (
         <div className="min-h-screen bg-background overflow-x-hidden">
             <header className='w-full flex items-center justify-between px-4 py-3'>
-                <h1 className="text-xl md:text-2xl font-bold text-foreground flex-1 text-center">Zero Liquid Discharge - RSP</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-foreground flex-1 text-center">Project Title</h1>
                 {/* theme switch */}
                 <button
                     onClick={toggleDarkMode}
