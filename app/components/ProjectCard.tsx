@@ -3,6 +3,8 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 
+import { Delete, EditIcon, Save, Trash2, X } from 'lucide-react'
+
 const ProjectCard = ({
   id,
   title,
@@ -208,39 +210,39 @@ const ProjectCard = ({
       {/* Action Buttons (Top Right) */}
       <div className="absolute top-4 right-4 flex gap-2">
         {!isEditing ? (
-          <>
+          <div className='icons-wrapper flex gap-2'>
             <button
               onClick={() => setIsEditing(true)}
-              className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-xs"
+              className="p-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg transition-colors text-xs"
               disabled={isLoading}
             >
-              ✏️ Edit
+              <EditIcon/>
             </button>
             <button
               onClick={handleDelete}
               className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors text-xs"
               disabled={isLoading}
             >
-              🗑️ Delete
+              <Trash2/>
             </button>
-          </>
+          </div>
         ) : (
-          <>
+          <div className='flex gap-2'>
             <button
               onClick={handleSave}
               className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors text-xs"
               disabled={isLoading}
             >
-              💾 Save
+              <Save/>
             </button>
             <button
               onClick={handleCancel}
-              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors text-xs"
+              className="p-2 bg-red-400 hover:bg-gray-600 text-white rounded-lg transition-colors text-xs"
               disabled={isLoading}
             >
-              ❌ Cancel
+              <X/>
             </button>
-          </>
+          </div>
         )}
       </div>
 

@@ -8,6 +8,7 @@ import { Project } from '@/lib/types';
 import SearchBar from '../components/SearchBar';
 import SearchResultList from '../components/SearchResultList';
 import AddProjectModal from '../components/AddProjectModal';
+import CreateIcon from '../components/Icons/CreateIcon';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -54,6 +55,16 @@ export default function Dashboard() {
 
   const handleProjectAdded = (newProject: any) => {
     setResults(prev => [newProject, ...prev])
+  }
+
+  const handleProjectUpdate = (id: number, updatedData: any) => {
+    setResults(prev => prev.map(project => 
+      project.id === id ? { ...project, ...updatedData } : project
+    ))
+  }
+
+  const handleProjectDelete = (id: number) => {
+    setResults(prev => prev.filter(project => project.id !== id))
   }
 
 
@@ -208,9 +219,9 @@ export default function Dashboard() {
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-sm transition-colors flex items-center gap-2"
               >
-                ➕ Add Project
+                <CreateIcon/> <span>Create</span>
               </button>
             </div>
           </div>
@@ -225,7 +236,11 @@ export default function Dashboard() {
           {/* {
             projectArray.map((project) => <ProjectCard title={project.title} oneliner={project.oneliner} key={project.id} />)
           } */}
-          <SearchResultList results={results} />
+          <SearchResultList 
+            results={results} 
+            onProjectUpdate={handleProjectUpdate}
+            onProjectDelete={handleProjectDelete}
+          />
 
 
           {/* <div className="bg-card border border-border rounded-xl p-6 shadow-lg">

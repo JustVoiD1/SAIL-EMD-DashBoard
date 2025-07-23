@@ -13,6 +13,8 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
     title: '',
     oneliner: '',
     progress: 0,
+    // start_date: new Date().toISOString().split('T')[0],
+    // end_date: new Date().toISOString().split('T')[0],
     start_date: '',
     end_date: '',
     image_url: '',
@@ -32,6 +34,12 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
 
     try {
       const token = localStorage.getItem('token');
+      const currentDate = new Date().toISOString().split('T')[0]
+      const projectData = {
+        ...formData,
+        start_date : formData.start_date || currentDate,
+        end_date : formData.end_date || currentDate
+      }
       
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -39,7 +47,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(projectData)
       });
 
       if (response.ok) {
@@ -106,7 +114,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               required
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter project title"
             />
           </div>
@@ -121,7 +129,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               rows={3}
               value={formData.oneliner}
               onChange={(e) => handleInputChange('oneliner', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter project description"
             />
           </div>
@@ -137,7 +145,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               max="100"
               value={formData.progress}
               onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
             />
           </div>
@@ -178,7 +186,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 type="url"
                 value={formData.image_url}
                 onChange={(e) => handleInputChange('image_url', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/image.jpg"
               />
             </div>
@@ -190,7 +198,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 type="url"
                 value={formData.video_url}
                 onChange={(e) => handleInputChange('video_url', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/video.mp4"
               />
             </div>

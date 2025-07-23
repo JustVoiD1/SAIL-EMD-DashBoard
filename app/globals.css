@@ -266,17 +266,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Smooth dark mode transitions */
   html {
     transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
   }
 
   * {
-    transition: 
+    transition:
       background-color 0.5s ease-in-out,
       border-color 0.5s ease-in-out,
       color 0.5s ease-in-out,
@@ -284,5 +285,14 @@
       stroke 0.5s ease-in-out,
       backdrop-filter 0.5s ease-in-out,
       box-shadow 0.5s ease-in-out;
+  }
+
+  /* Date input color scheme fixes */
+  input[type="date"] {
+    color-scheme: light;
+  }
+
+  .dark input[type="date"] {
+    color-scheme: dark;
   }
 }
