@@ -5,7 +5,7 @@ import { Client } from "pg"
 const DB_URI = process.env.DB_URI!
 const JWT_SECRET = process.env.JWT_SECRET!
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const pgClient = new Client(DB_URI);
 
     try {
@@ -71,7 +71,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 
     const pgClient = new Client(DB_URI)
 
@@ -95,7 +95,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         await pgClient.connect();
         const deleteQuery = `delete from projects where id = $1 and worker_id = $2 returning id, title`;
 
-        const result = await pgClient.query(deleteQuery, [params.id, userId]);
+        const { id } = await params;
+        const result = await pgClient.query(deleteQuery, [id, userId]);
 
         if (result.rows.length === 0) {
             return NextResponse.json(
