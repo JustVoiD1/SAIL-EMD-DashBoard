@@ -9,6 +9,22 @@ import SearchBar from '../components/SearchBar';
 import SearchResultList from '../components/SearchResultList';
 import AddProjectModal from '../components/AddProjectModal';
 import CreateIcon from '../components/Icons/CreateIcon';
+import Selectbar from '../components/SelectBar';
+import ProjectsTable from '../components/ProjectsTable';
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronDown } from 'lucide-react';
+import { VisibilityState } from "@tanstack/react-table"
 
 export default function Dashboard() {
   const router = useRouter();
@@ -17,55 +33,56 @@ export default function Dashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [results, setResults] = useState<Project[]>([])
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const searchRef = useRef<HTMLInputElement>(null)
+  const [projectSearched, setProjectSearched] = useState<string>("") // Add filter state
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // Add column visibility state
+  const [tableInstance, setTableInstance] = useState<any>(null) // Add table instance state
+  // const searchRef = useRef<HTMLInputElement>(null)
   const imagesize = 50
 
 
-  const globalStatsArray = [
-    {
-      id: 1,
-      title: 'Total',
-      value: results.length,
-      imageURL: '/icons/TotalIcon.svg'
-    },
-    {
-      id: 2,
-      title: 'Ongoing',
-      value: results.filter((item) => item['progress'] < 100
-      ).length,
-      imageURL: '/icons/OngoingIcon.svg'
-    },
-    {
-      id: 3,
-      title: 'Completed',
-      value: results.filter((it => it['progress'] === 100)).length,
-      imageURL: '/icons/CompletedIcon.svg'
-    },
-    // {
-    //   id: 4,
-    //   title: 'Delivery Rate',
-    //   value: "86%",
-    //   imageURL: '/icons/SuccessRateIcon.svg'
-    // },
-
-  ]
 
 
+  const fetchProjects = async () => {
+    try{
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/projects', {
+        headers:{
+          "Authorization" : `Bearer ${token}`,
+          "Content-type" : 'application/json'
+        } 
+      });
+
+      if(response.ok){
+        const data = await response.json();
+        if(data.success){
+          setResults(data.projects);
+        }
+
+        else{
+          console.error('Failed fetching projects');
+        }
+      }
+
+    } catch(err){
+      console.error(err);
+
+    }
+  }
 
 
   const handleProjectAdded = (newProject: any) => {
     setResults(prev => [newProject, ...prev])
   }
 
-  const handleProjectUpdate = (id: number, updatedData: any) => {
-    setResults(prev => prev.map(project => 
-      project.id === id ? { ...project, ...updatedData } : project
-    ))
-  }
+  // const handleProjectUpdate = (id: number, updatedData: any) => {
+  //   setResults(prev => prev.map(project =>
+  //     project.id === id ? { ...project, ...updatedData } : project
+  //   ))
+  // }
 
-  const handleProjectDelete = (id: number) => {
-    setResults(prev => prev.filter(project => project.id !== id))
-  }
+  // const handleProjectDelete = (id: number) => {
+  //   setResults(prev => prev.filter(project => project.id !== id))
+  // }
 
 
 
@@ -102,7 +119,9 @@ export default function Dashboard() {
       return;
     }
 
+    fetchProjects();
     setIsLoading(false);
+    // fetch call
   }, [router]);
 
   // Toggle dark mode
@@ -143,11 +162,11 @@ export default function Dashboard() {
       <header className='sticky top-0 z-50'>
 
         <nav className="bg-card border-b border-border p-4">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="w-[97vw] mx-auto flex justify-between items-center">
             <Image alt='logo' height={imagesize} width={imagesize} src={'SAIL_logo.svg'} />
 
             <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-800 bg-clip-text text-transparent text-center flex-1 mx-4">
-              EMD SAIL Projects Dashboard
+              SAIL CMO Estate Management Department
             </h1>
 
             <div className="flex items-center space-x-2 lg:space-x-4">
@@ -188,12 +207,12 @@ export default function Dashboard() {
           </div>
         </nav>
 
-        {/* Global Stats Topbar */}
         <div className="bg-card/50 backdrop-blur-sm border-b border-border">
-          <div className="max-w-7xl mx-auto p-4">
+          {/* Global Stats Topbar */}
+          <div className="w-[97vw] mx-auto p-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               {/* Search Bar */}
-              <div className="flex-shrink-0 lg:w-80">
+              {/* <div className="flex-shrink-0 lg:w-80">
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,43 +226,89 @@ export default function Dashboard() {
                     </kbd>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
 
-
+              <Selectbar />
 
               {/* Global Stats */}
-              <div className="flex flex-wrap gap-4">
+              {/* <div className="flex flex-wrap gap-4">
                 {globalStatsArray.map((item) => < GlobalStatCard key={item.id} imageURL={item.imageURL} title={item.title} value={item.value} />)}
-              </div>
+              </div> */}
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-sm transition-colors flex items-center gap-2"
               >
-                <CreateIcon/> <span>Create</span>
+                <CreateIcon /> <span>Create</span>
               </button>
+            </div>
+            <div className=' searchbarline mt-3 flex justify-between items-center'>
+              <Input
+                placeholder="Search projects..."
+                value={projectSearched}
+                onChange={(event) => setProjectSearched(event.target.value)}
+                className="max-w-sm border-accent"
+              />
+              <div className='flex items-center py-4'>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-auto">
+                      Columns <ChevronDown />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {tableInstance?.getAllColumns()
+                      ?.filter((column: any) => column.getCanHide())
+                      ?.map((column: any) => {
+                        return (
+                          <DropdownMenuCheckboxItem
+                            key={column.id}
+                            className="capitalize"
+                            checked={column.getIsVisible()}
+                            onCheckedChange={(value) =>
+                              column.toggleVisibility(!!value)
+                            }
+                          >
+                            {column.id}
+                          </DropdownMenuCheckboxItem>
+                        )
+                      })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+              </div>
             </div>
           </div>
         </div>
       </header>
 
       {/* Dashboard Content */}
-      <main className="max-w-7xl mx-auto p-6">
+      <main className="w-[100vw] mx-auto p-6">
+        <ProjectsTable
+          projects={results}
+          searchValue={projectSearched}
+          columnVisibility={columnVisibility}
+          onColumnVisibilityChange={setColumnVisibility}
+          onTableInstanceReady={setTableInstance}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Dashboard Cards */}
           {/* search results  */}
           {/* {
             projectArray.map((project) => <ProjectCard title={project.title} oneliner={project.oneliner} key={project.id} />)
           } */}
-          <SearchResultList 
-            results={results} 
+
+
+
+          {/* <SearchResultList
+            results={results}
             onProjectUpdate={handleProjectUpdate}
             onProjectDelete={handleProjectDelete}
-          />
+          /> */}
 
-
-          {/* <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
+          {/*
+           <div className="bg-card border border-border rounded-xl p-6 shadow-lg">
             <h3 className="text-xl font-semibold text-foreground mb-2">
               Reports
             </h3>
@@ -265,7 +330,8 @@ export default function Dashboard() {
             <div className="mt-4 h-20 bg-muted rounded-lg flex items-center justify-center">
               <span className="text-muted-foreground">Settings Placeholder</span>
             </div>
-          </div> */}
+          </div>
+           */}
         </div>
 
 

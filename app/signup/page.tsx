@@ -122,7 +122,7 @@ export default function SignUPModal() {
                     <Image alt='logo' height={imagesize} width={imagesize} src={'SAIL_logo.svg'} className="mx-auto" />
 
                     <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-800 bg-clip-text text-transparent mb-2">
-                        EMD SAIL
+                        SAIL CMO
                     </h2>
                     <p className="text-foreground text-sm">
                         Create Account

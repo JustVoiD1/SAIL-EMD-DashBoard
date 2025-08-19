@@ -29,13 +29,34 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         await pgClient.connect();
 
-        const { title, oneliner, progress, start_date, end_date, image_url, video_url } = await req.json();
+        const { title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark } = await req.json();
 
-        const updateQUery = `update projects
-        set title = $1, oneliner=$2, progress=$3, start_date=$4, end_date=$5, image_url=$6, video_url=$7, updated_at=CURRENT_TIMESTAMP where id=$8 and worker_id=$9 returning *`;
+        if (!title || !description || !region || !type) {
+            return NextResponse.json(
+                { success: false, error: 'Title, description, region, and type are required' },
+                { status: 400 }
+            );
+        }
 
-        const result = await pgClient.query(updateQUery, [title, oneliner, progress, start_date, end_date, image_url, video_url,
-            id, userId]);
+        const updateQuery = `update projects set title = $1, description = $2, region = $3, type = $4, status = $5, progress = $6, start_date = $7, end_date = $8, image_url = $9, video_url = $10, stage_ii_wo = $11, bill_released = $12, remark = $13, updated_at = CURRENT_TIMESTAMP where id = $14 and worker_id = $15 returning *`;
+
+        const result = await pgClient.query(updateQuery, [
+            title,
+            description,
+            region,
+            type,
+            status,
+            progress,
+            start_date,
+            end_date,
+            image_url,
+            video_url,
+            stage_ii_wo,
+            bill_released,
+            remark,
+            id,
+            userId
+        ]);
 
         if (result.rows.length === 0) {
             return NextResponse.json(
@@ -119,17 +140,74 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         console.error(err);
         return NextResponse.json(
             {
-                success : false,
-                error : 'Error deleting project'
+                success: false,
+                error: 'Error deleting project'
             },
-            {status : 500}
+            { status: 500 }
         )
     } finally {
-        try{
+        try {
             await pgClient.end()
         } catch (closeErrr) {
             console.error('Closing error ', closeErrr)
         }
 
     }
+}
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+
+    const pgClient = new Client(DB_URI);
+    try {
+        const { id } = await params;
+        const authHeader = req.headers.get('authorization');
+        const token = authHeader?.replace("Bearer ", "") || req.cookies.get('token')?.value;
+
+        if (!token) {
+            return NextResponse.json(
+                { success: false, error: "No token Found" },
+                { status: 401 }
+            );
+        }
+
+        const secret = new TextEncoder().encode(JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        const userId = payload.id || payload.userId;
+
+        await pgClient.connect();
+
+        const selectQuery = `select * from projects where id = $1 and worker_id = $2`;
+        //id from params, userid from token payload
+        const result = await pgClient.query(selectQuery, [id, userId]);
+
+        if (result.rows.length === 0) {
+            return NextResponse.json(
+                { success: false, error: "Project Not Found" },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(
+            {
+                success: true,
+                project: result.rows[0]
+            },
+            {status  : 200}
+            
+        );
+
+    } catch (err) {
+        console.error(err);
+        return NextResponse.json(
+            { success: false, error: 'Error Fetching Project' },
+            { status: 500 }
+        )
+    } finally {
+        try {
+            await pgClient.end();
+        } catch (closeErr) {
+            console.error('Closing Erro : ', closeErr);
+        }
+    }
+
 }

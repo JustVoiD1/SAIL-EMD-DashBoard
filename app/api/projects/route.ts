@@ -101,51 +101,55 @@ export async function POST(req: NextRequest) {
 
         await pgClient.connect();
 
-        const { title, oneliner, progress, start_date, end_date, image_url, video_url } = await req.json();
-
-        if (!title || !oneliner) {
+        const { title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark } = await req.json();
+        if (!title || !description || !region || !type) {
             return NextResponse.json(
-                { success: false, error: 'Title and description Required' },
+                { success: false, error: 'Title, description, region and type are Required' },
                 { status: 401 }
             )
         }
 
-        const insertQuery = `insert into projects (title, oneliner, progress, start_date, end_date, image_url, video_url, worker_id, created_at, updated_at)
-        values ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-        returning *`;
-
+        const insertQuery = `insert into projects (title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark, worker_id, created_at, updated_at)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        returning *`
         const result = await pgClient.query(insertQuery, [
-            title,
-            oneliner,
-            progress || 0,
-            start_date || null,
-            end_date || null,
-            image_url || null,
-            video_url || null,
-            userId
-
+            title,            
+            description,      
+            region,           
+            type,             
+            status || "ongoing",   
+            progress || 0,         
+            start_date || null,    
+            end_date || null,      
+            image_url || null,     
+            video_url || null,     
+            stage_ii_wo || 0,      
+            bill_released || 0,    
+            remark || null,       
+            userId        
         ]);
+
 
         return NextResponse.json(
             {
                 success: true,
                 project: result.rows[0],
-                message : "Project Created Successfully"
+                message: "Project Created Successfully"
             }
-            
+
         )
     } catch (err) {
         console.error(err);
         return NextResponse.json(
-                {success : false, error : 'Error Creating Project'},
-                {status : 500}
-            )
+            { success: false, error: 'Error Creating Project' },
+            { status: 500 }
+        )
 
     } finally {
-        try{
+        try {
             pgClient.end();
-        } catch (closeErr){
-            console.error('Closing Error :  ',closeErr)
+        } catch (closeErr) {
+            console.error('Closing Error :  ', closeErr)
         }
     }
 }

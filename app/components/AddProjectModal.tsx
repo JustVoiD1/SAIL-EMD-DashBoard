@@ -11,14 +11,18 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    oneliner: '',
+    description: '', // changed from oneliner
+    region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
+    type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
+    status: 'ongoing' as 'completed' | 'ongoing',
     progress: 0,
-    // start_date: new Date().toISOString().split('T')[0],
-    // end_date: new Date().toISOString().split('T')[0],
     start_date: '',
     end_date: '',
     image_url: '',
-    video_url: ''
+    video_url: '',
+    stage_ii_wo: 0,
+    bill_released: 0,
+    remark: ''
   });
 
   const handleInputChange = (field: string, value: string | number) => {
@@ -37,10 +41,10 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
       const currentDate = new Date().toISOString().split('T')[0]
       const projectData = {
         ...formData,
-        start_date : formData.start_date || currentDate,
-        end_date : formData.end_date || currentDate
+        start_date: formData.start_date || currentDate,
+        end_date: formData.end_date || currentDate
       }
-      
+
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
@@ -71,12 +75,18 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
   const handleClose = () => {
     setFormData({
       title: '',
-      oneliner: '',
+      description: '',
+      region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
+      type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
+      status: 'ongoing' as 'completed' | 'ongoing',
       progress: 0,
       start_date: '',
       end_date: '',
       image_url: '',
-      video_url: ''
+      video_url: '',
+      stage_ii_wo: 0,
+      bill_released: 0,
+      remark: ''
     });
     onClose();
   };
@@ -86,11 +96,11 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleClose}
       ></div>
-      
+
       {/* Modal */}
       <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
         <div className="flex justify-between items-center mb-6">
@@ -127,11 +137,62 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
             <textarea
               required
               rows={3}
-              value={formData.oneliner}
-              onChange={(e) => handleInputChange('oneliner', e.target.value)}
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
               className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter project description"
             />
+          </div>
+          {/* Region */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Region *
+            </label>
+            <select
+              required
+              value={formData.region}
+              onChange={(e) => handleInputChange('region', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="HQ">HQ</option>
+              <option value="ER">ER</option>
+              <option value="NR">NR</option>
+              <option value="SR">SR</option>
+              <option value="WR">WR</option>
+            </select>
+          </div>
+
+          {/* Type */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Type *
+            </label>
+            <select
+              required
+              value={formData.type}
+              onChange={(e) => handleInputChange('type', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Capital">Capital</option>
+              <option value="R & M">R & M</option>
+              <option value="Stores & Spares">Stores & Spares</option>
+            </select>
+          </div>
+
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Status
+            </label>
+            <select
+              value={formData.status}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+            </select>
           </div>
 
           {/* Progress */}
@@ -145,6 +206,36 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               max="100"
               value={formData.progress}
               onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="0"
+            />
+          </div>
+
+          {/* Stage II Work Order */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Stage II WO Amount (₹)
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.stage_ii_wo}
+              onChange={(e) => handleInputChange('stage_ii_wo', parseInt(e.target.value) || 0)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="0"
+            />
+          </div>
+
+          {/* Bill Released */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Bill Released Amount (₹)
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.bill_released}
+              onChange={(e) => handleInputChange('bill_released', parseInt(e.target.value) || 0)}
               className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="0"
             />
@@ -202,6 +293,20 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 placeholder="https://example.com/video.mp4"
               />
             </div>
+          </div>
+
+          {/* Remarks */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Remark
+            </label>
+            <textarea
+              rows={2}
+              value={formData.remark}
+              onChange={(e) => handleInputChange('remark', e.target.value)}
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              placeholder="Enter any remarks"
+            />
           </div>
 
           {/* Buttons */}
