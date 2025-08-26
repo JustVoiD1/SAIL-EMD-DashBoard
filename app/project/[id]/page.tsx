@@ -248,7 +248,7 @@ const page = () => {
                         <div className="h-full overflow-y-auto">
                             <p className="text-muted-foreground leading-relaxed text-sm mb-4">
 
-                                {project.desc}
+                                {project.description}
                             </p>
                             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                 <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Remarks:</h3>

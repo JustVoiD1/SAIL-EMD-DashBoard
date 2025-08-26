@@ -37,7 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SelectBar from "@/app/components/SelectBar"
-import { FilterValues, Project } from "@/lib/types"
+import { FilterValues, Project, ProjectNew } from "@/lib/types"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -55,6 +55,26 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
 
   return Math.round(progress);
 };
+
+interface TableProjectType {
+  id: number,
+  title: string,
+  desc: string,
+  region: "HQ" | "ER" | "NR" | "SR" | "WR",
+  type: "Capital" | "R & M" | "Stores & Spares",
+  status: "completed" | "ongoiing",
+  stageIIWO: string,
+
+  progress: number,
+  created_at: string,
+  updated_at: string,
+  start_date: string,
+  end_date: string,
+  image_url: string,
+  video_url: string,
+  remark: string,
+
+}
 
 // const data: Project[] = [
 //   {
@@ -183,7 +203,7 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
 
 
 
-export const columns: ColumnDef<Project>[] = [
+export const columns: ColumnDef<ProjectNew | any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -386,7 +406,10 @@ export const columns: ColumnDef<Project>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const project = row.original
+      const project : TableProjectType = row.original
+      console.log('Available project data:', project); // Check what's available
+      console.log('Row values:', row.getAllCells().map(cell => ({ id: cell.column.id, value: cell.getValue() })));
+  
 
       return (
         <DropdownMenu>
@@ -399,7 +422,7 @@ export const columns: ColumnDef<Project>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem><Link href={`/demoproject`}>View project details</Link></DropdownMenuItem>
+            <DropdownMenuItem><Link href={`/project/${project.id}`}>View project details</Link></DropdownMenuItem>
             <DropdownMenuItem>Edit project</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(project.stageIIWO.toString())}

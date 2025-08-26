@@ -1,22 +1,45 @@
-// export interface Project {
-//   id: number,
-//   title: string,
-//   oneliner: string,
-//   progress: number,
-//   created_at: string,
-//   updated_at: string,
-//   start_date: string,
-//   end_date: string,
-//   image_url: null | string,
-//   video_url: null | string,
-// }
-
+// Only the following two types to be used in future 
+export interface Project1 {
+  id: number
+  title: string
+  description: string | null
+  region: "HQ" | "ER" | "NR" | "SR" | "WR"
+  type: "Capital" | "R & M" | "Stores & Spares"
+  status: "completed" | "ongoing"
+  progress: number
+  start_date: string
+  end_date: string
+  stage_ii_wo: string 
+  bill_released: string
+  image_url: string | null
+  video_url: string | null
+  remark: string | null
+  created_at: string
+  updated_at: string
+  deadline_progress: number
+}
+export interface ProjectFormData{
+  title: string
+  description: string
+  region: "HQ" | "ER" | "NR" | "SR" | "WR"
+  type: "Capital" | "R & M" | "Stores & Spares"
+  status: "completed" | "ongoing"
+  progress: number
+  start_date: string
+  end_date: string
+  stage_ii_wo: number
+  bill_released: number
+  image_url: string
+  video_url: string
+  remark: string
+}
 export interface ProjectNew {
   id: number,
   title: string,
   desc: string,
   region: "HQ" | "ER" | "NR" | "SR" | "WR",
   type: "Capital" | "R & M" | "Stores & Spares",
+  stageIIWO : string,
   status: "completed" | "ongoiing",
   progress: number,
   created_at: string,
