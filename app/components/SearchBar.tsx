@@ -1,11 +1,11 @@
-import { Project } from '@/lib/types'
+import { Project1 } from '@/lib/types'
 import React, { useState, useEffect } from 'react'
 
 
 
 const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAction<Project[]>> }) => {
     const [inputVal, setInputVal] = useState("");
-    const [allProjects, setAllProjects] = useState<Project[]>([]); // Store all projects from API
+    const [allProjects, setAllProjects] = useState<Project1[]>([]); // Store all projects from API
     const [isLoading, setIsLoading] = useState(false);
 
     // Initialize with all projects on component mount

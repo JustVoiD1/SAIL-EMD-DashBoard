@@ -1,4 +1,4 @@
-import { Project } from '@/lib/types'
+import { Project1 } from '@/lib/types'
 import React from 'react'
 import ProjectCard from './ProjectCard'
 
@@ -6,7 +6,7 @@ import ProjectCard from './ProjectCard'
 
 
 const SearchResultList = ({ results, onProjectDelete, onProjectUpdate }: { 
-    results: Project[],
+    results: Project1[],
     onProjectUpdate? : (id : number, data : any) => void,
     onProjectDelete? : (id : number) => void,
 }) => {
