@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProjectCard from '../components/ProjectCard';
 import GlobalStatCard from '../components/GlobalStatCard';
-import { FilterValues, Project } from '@/lib/types';
+import { FilterValues, Project1 } from '@/lib/types';
 import SearchBar from '../components/SearchBar';
 import SearchResultList from '../components/SearchResultList';
 import AddProjectModal from '../components/AddProjectModal';
@@ -31,7 +31,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [results, setResults] = useState<Project[]>([])
+  const [results, setResults] = useState<Project1[]>([])
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [projectSearched, setProjectSearched] = useState<string>("") // Add filter state
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // Add column visibility state

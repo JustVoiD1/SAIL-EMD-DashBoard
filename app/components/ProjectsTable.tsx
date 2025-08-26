@@ -37,7 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SelectBar from "@/app/components/SelectBar"
-import { FilterValues, Project, ProjectNew } from "@/lib/types"
+import { FilterValues, Project1, ProjectFormData } from "@/lib/types"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -56,25 +56,7 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
   return Math.round(progress);
 };
 
-interface TableProjectType {
-  id: number,
-  title: string,
-  desc: string,
-  region: "HQ" | "ER" | "NR" | "SR" | "WR",
-  type: "Capital" | "R & M" | "Stores & Spares",
-  status: "completed" | "ongoiing",
-  stageIIWO: string,
 
-  progress: number,
-  created_at: string,
-  updated_at: string,
-  start_date: string,
-  end_date: string,
-  image_url: string,
-  video_url: string,
-  remark: string,
-
-}
 
 // const data: Project[] = [
 //   {
@@ -203,7 +185,7 @@ interface TableProjectType {
 
 
 
-export const columns: ColumnDef<ProjectNew | any>[] = [
+export const columns: ColumnDef<ProjectFormData | any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -312,7 +294,7 @@ export const columns: ColumnDef<ProjectNew | any>[] = [
     cell: ({ row }) => {
       const billAmount = row.getValue("bill_released") as number
       const woAmount = row.getValue("stage_ii_wo") as number
-      const percentage = woAmount > 0 ? Math.round((billAmount / woAmount) * 100) : 0
+      const percentage = woAmount > 0 ? Math.round(((billAmount / woAmount) * 100) * 10) / 10 : 0
 
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
@@ -359,7 +341,7 @@ export const columns: ColumnDef<ProjectNew | any>[] = [
               style={{ width: `${Math.min(progress, 100)}%` }}
             ></div>
           </div>
-          <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : progress >= 100 ? 'text-green-600' : 'text-foreground'
+          <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : progress >= 100 ? 'text-red-600' : 'text-foreground'
             }`}>
             {progress}
           </span>
@@ -406,7 +388,7 @@ export const columns: ColumnDef<ProjectNew | any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const project : TableProjectType = row.original
+      const project : Project1 = row.original
       console.log('Available project data:', project); // Check what's available
       console.log('Row values:', row.getAllCells().map(cell => ({ id: cell.column.id, value: cell.getValue() })));
   
@@ -425,7 +407,7 @@ export const columns: ColumnDef<ProjectNew | any>[] = [
             <DropdownMenuItem><Link href={`/project/${project.id}`}>View project details</Link></DropdownMenuItem>
             <DropdownMenuItem>Edit project</DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(project.stageIIWO.toString())}
+              onClick={() => navigator.clipboard.writeText(project.stage_ii_wo.toString())}
             >
               Copy WO Amount
             </DropdownMenuItem>
@@ -453,7 +435,7 @@ export default function ProjectsTable({
   onColumnVisibilityChange,
   onTableInstanceReady
 }: ProjectsTableProps) {
-  const [data, setData] = useState<Project[]>(projects)
+  const [data, setData] = useState<Project1[]>(projects)
   console.log('Data : ',data)
   // setData(projects);
   const [sorting, setSorting] = useState<SortingState>([])

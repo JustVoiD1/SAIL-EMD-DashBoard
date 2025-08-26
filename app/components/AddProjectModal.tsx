@@ -155,11 +155,11 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 onChange={(e) => handleInputChange('region', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="hq">HQ</option>
-                <option value="er">ER</option>
-                <option value="nr">NR</option>
-                <option value="sr">SR</option>
-                <option value="wr">WR</option>
+                <option value="HQ">HQ</option>
+                <option value="ER">ER</option>
+                <option value="NR">NR</option>
+                <option value="SR">SR</option>
+                <option value="WR">WR</option>
               </select>
             </div>
 
@@ -174,9 +174,9 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 onChange={(e) => handleInputChange('type', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="capital">Capital</option>
-                <option value="r&m">R & M</option>
-                <option value="stores&spares">Stores & Spares</option>
+                <option value="Capital">Capital</option>
+                <option value="R & M">R & M</option>
+                <option value="Stores & Spares">Stores & Spares</option>
               </select>
             </div>
 

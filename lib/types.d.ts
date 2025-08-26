@@ -5,7 +5,7 @@ export interface Project1 {
   description: string | null
   region: "HQ" | "ER" | "NR" | "SR" | "WR"
   type: "Capital" | "R & M" | "Stores & Spares"
-  status: "completed" | "ongoing"
+  status: "Completed" | "Ongoing"
   progress: number
   start_date: string
   end_date: string
@@ -23,7 +23,7 @@ export interface ProjectFormData{
   description: string
   region: "HQ" | "ER" | "NR" | "SR" | "WR"
   type: "Capital" | "R & M" | "Stores & Spares"
-  status: "completed" | "ongoing"
+  status: "Completed" | "Ongoing"
   progress: number
   start_date: string
   end_date: string
@@ -33,35 +33,35 @@ export interface ProjectFormData{
   video_url: string
   remark: string
 }
-export interface ProjectNew {
-  id: number,
-  title: string,
-  desc: string,
-  region: "HQ" | "ER" | "NR" | "SR" | "WR",
-  type: "Capital" | "R & M" | "Stores & Spares",
-  stageIIWO : string,
-  status: "completed" | "ongoiing",
-  progress: number,
-  created_at: string,
-  updated_at: string,
-  start_date: string,
-  end_date: string,
-  image_url: string,
-  video_url: string,
-  remark: string,
+// export interface ProjectNew {
+//   id: number,
+//   title: string,
+//   desc: string,
+//   region: "HQ" | "ER" | "NR" | "SR" | "WR",
+//   type: "Capital" | "R & M" | "Stores & Spares",
+//   stageIIWO : string,
+//   status: "completed" | "ongoing",
+//   progress: number,
+//   created_at: string,
+//   updated_at: string,
+//   start_date: string,
+//   end_date: string,
+//   image_url: string,
+//   video_url: string,
+//   remark: string,
 
-}
+// }
 
-export type Project = {
-  slNo: number
-  projectName: string
-  startDate: string // Project start date
-  stageIIWO: number // Amount in rupees
-  completionDateAsPerWO: string
-  billReleased: number // Amount in rupees
-  deadlineProgress: number // Percentage as number based on deadline calculation
-  remark: string
-}
+// export type Project = {
+//   slNo: number
+//   projectName: string
+//   startDate: string // Project start date
+//   stageIIWO: number // Amount in rupees
+//   completionDateAsPerWO: string
+//   billReleased: number // Amount in rupees
+//   deadlineProgress: number // Percentage as number based on deadline calculation
+//   remark: string
+// }
 
 
 export interface FilterValues {

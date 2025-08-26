@@ -1,6 +1,6 @@
 'use client'
 import StickyHeader from '@/app/components/StickyHeader';
-import { Project, ProjectNew } from '@/lib/types';
+import { Project1 } from '@/lib/types';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { Cell, Pie, PieChart, LineChart, BarChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
@@ -114,9 +114,13 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 
 const page = () => {
   const { id } = useParams()
-  const [project, setProject] = useState<ProjectNew | null>(null)
+  const [project, setProject] = useState<Project1 | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  let percentage;
+  if(!project) percentage = 0;
+  else percentage = ((parseInt(project.stage_ii_wo) - parseInt(project.bill_released))*100/parseInt(project.stage_ii_wo)).toFixed(1);
+
 
 
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -248,15 +252,12 @@ const page = () => {
                         <div className="h-full overflow-y-auto">
                             <p className="text-muted-foreground leading-relaxed text-sm mb-4">
 
-                                {project.description}
+                                {project.description || "No description available"}
                             </p>
                             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                 <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Remarks:</h3>
-                                <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                                <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
                                     <li>• {project.remark}</li>
-                                    <li>• 25% improvement in energy efficiency</li>
-                                    <li>• Enhanced emergency response capabilities</li>
-                                    <li>• Improved citizen satisfaction and quality of life</li>
                                 </ul>
                             </div>
                         </div>
@@ -272,32 +273,32 @@ const page = () => {
                         <div className="grid grid-cols-2 gap-3">
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Project ID</h3>
-                                <p className="text-primary font-bold">1</p>
+                                <p className="text-primary font-bold">{project.id}</p>
                             </div>
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Region</h3>
-                                <p className="text-blue-600 font-bold">HQ</p>
+                                <p className="text-blue-600 font-bold">{project.region}</p>
                             </div>
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Type</h3>
-                                <p className="text-purple-600 font-bold">Capital</p>
+                                <p className="text-purple-600 font-bold">{project.type}</p>
                             </div>
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Status</h3>
-                                <p className="text-orange-600 font-bold">Ongoing</p>
+                                <p className="text-orange-600 font-bold">{project.status}</p>
                             </div>
                         </div>
 
                         {/* Financial Info */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 grid grid-cols-2">
                             <div className="bg-green-50 dark:bg-green-900/20 rounded p-3">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Stage II WO Amount</h3>
-                                <p className="text-lg font-bold text-green-600">₹25,00,000</p>
+                                <p className="text-lg font-bold text-green-600">₹{parseInt(project.stage_ii_wo)}</p>
                             </div>
                             <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-3">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Bill Released</h3>
-                                <p className="text-lg font-bold text-blue-600">₹18,75,000</p>
-                                <p className="text-xs text-muted-foreground">75% of WO Amount</p>
+                                <p className="text-lg font-bold text-blue-600">₹{parseInt(project.bill_released)}</p>
+                                <p className="text-xs text-muted-foreground">{percentage}% of WO Amount</p>
                             </div>
                         </div>
 
@@ -305,11 +306,11 @@ const page = () => {
                         <div className="space-y-2">
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Start Date</h3>
-                                <p className="text-foreground">Jan 15, 2024</p>
+                                <p className="text-foreground">{new Date(project.start_date).toLocaleDateString()}</p>
                             </div>
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">End Date</h3>
-                                <p className="text-foreground">Dec 31, 2025</p>
+                                <p className="text-foreground">{new Date(project.start_date).toLocaleDateString()}</p>
                             </div>
                             <div className="bg-muted/20 rounded p-2">
                                 <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
@@ -334,11 +335,11 @@ const page = () => {
                         <div className="space-y-1 pt-2 border-t border-border">
                             <div className="flex justify-between text-xs text-muted-foreground">
                                 <span>Updated:</span>
-                                <span>Aug 15, 2025</span>
+                                <span>{new Date(project.updated_at).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between text-xs text-muted-foreground">
                                 <span>Created:</span>
-                                <span>Aug 15, 2025</span>
+                                <span>{new Date(project.created_at).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

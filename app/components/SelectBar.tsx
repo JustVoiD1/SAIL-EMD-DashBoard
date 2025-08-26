@@ -27,11 +27,11 @@ const Selectbar = ({
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Regions</SelectItem>
-                    <SelectItem value="hq">HQ</SelectItem>
-                    <SelectItem value="er">ER</SelectItem>
-                    <SelectItem value="nr">NR</SelectItem>
-                    <SelectItem value="sr">SR</SelectItem>
-                    <SelectItem value="wr">WR</SelectItem>
+                    <SelectItem value="HQ">HQ</SelectItem>
+                    <SelectItem value="ER">ER</SelectItem>
+                    <SelectItem value="NR">NR</SelectItem>
+                    <SelectItem value="SR">SR</SelectItem>
+                    <SelectItem value="WR">WR</SelectItem>
                 </SelectContent>
             </Select>
             <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
@@ -40,9 +40,9 @@ const Selectbar = ({
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All types</SelectItem>
-                    <SelectItem value="capital">Capital</SelectItem>
-                    <SelectItem value="r&m">R & M</SelectItem>
-                    <SelectItem value="stores&spares">Stores & spares</SelectItem>
+                    <SelectItem value="Capital">Capital</SelectItem>
+                    <SelectItem value="R & M">R & M</SelectItem>
+                    <SelectItem value="Stores & Spares">Stores & spares</SelectItem>
 
                 </SelectContent>
             </Select>
