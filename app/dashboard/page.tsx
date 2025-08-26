@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProjectCard from '../components/ProjectCard';
 import GlobalStatCard from '../components/GlobalStatCard';
-import { Project } from '@/lib/types';
+import { FilterValues, Project } from '@/lib/types';
 import SearchBar from '../components/SearchBar';
 import SearchResultList from '../components/SearchResultList';
 import AddProjectModal from '../components/AddProjectModal';
@@ -36,6 +36,7 @@ export default function Dashboard() {
   const [projectSearched, setProjectSearched] = useState<string>("") // Add filter state
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({}) // Add column visibility state
   const [tableInstance, setTableInstance] = useState<any>(null) // Add table instance state
+  const [selectBarFilters, setSelectBarFilters] = useState<FilterValues>({})
   // const searchRef = useRef<HTMLInputElement>(null)
   const imagesize = 50
 
@@ -162,7 +163,7 @@ export default function Dashboard() {
       <header className='sticky top-0 z-50'>
 
         <nav className="bg-card border-b border-border p-4">
-          <div className="w-[97vw] mx-auto flex justify-between items-center">
+          <div className="container mx-auto flex justify-between items-center">
             <Image alt='logo' height={imagesize} width={imagesize} src={'SAIL_logo.svg'} />
 
             <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-800 bg-clip-text text-transparent text-center flex-1 mx-4">
@@ -229,7 +230,10 @@ export default function Dashboard() {
               </div> */}
 
 
-              <Selectbar />
+              <Selectbar 
+                filters={selectBarFilters}
+                onFiltersChange={setSelectBarFilters}
+              />
 
               {/* Global Stats */}
               {/* <div className="flex flex-wrap gap-4">
@@ -238,7 +242,7 @@ export default function Dashboard() {
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-sm transition-colors flex items-center gap-2"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-sm transition-colors flex items-center gap-2"
               >
                 <CreateIcon /> <span>Create</span>
               </button>
@@ -248,7 +252,7 @@ export default function Dashboard() {
                 placeholder="Search projects..."
                 value={projectSearched}
                 onChange={(event) => setProjectSearched(event.target.value)}
-                className="max-w-sm border-accent"
+                className="max-w-sm border-2 border-accent"
               />
               <div className='flex items-center py-4'>
                 <DropdownMenu>
@@ -284,10 +288,11 @@ export default function Dashboard() {
       </header>
 
       {/* Dashboard Content */}
-      <main className="w-[100vw] mx-auto p-6">
+      <main className="container mx-auto p-6">
         <ProjectsTable
           projects={results}
           searchValue={projectSearched}
+          selectBarFilters={selectBarFilters}
           columnVisibility={columnVisibility}
           onColumnVisibilityChange={setColumnVisibility}
           onTableInstanceReady={setTableInstance}

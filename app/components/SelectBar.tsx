@@ -21,11 +21,12 @@ const Selectbar = ({
 
     return (<>
         <div className='filter-nav flex gap-2 justify-center items-center bg-background text-foreground'>
-            <Select>
+            <Select value={filters.region} onValueChange={(value) => handleFilterChange('region', value)}>
                 <SelectTrigger className="w-[180px] border-accent">
                     <SelectValue placeholder="Region" />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value="all">All Regions</SelectItem>
                     <SelectItem value="hq">HQ</SelectItem>
                     <SelectItem value="er">ER</SelectItem>
                     <SelectItem value="nr">NR</SelectItem>
@@ -33,32 +34,35 @@ const Selectbar = ({
                     <SelectItem value="wr">WR</SelectItem>
                 </SelectContent>
             </Select>
-            <Select>
+            <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
                 <SelectTrigger className="w-[180px] border-accent">
                     <SelectValue placeholder="Type of Project" />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value="all">All types</SelectItem>
                     <SelectItem value="capital">Capital</SelectItem>
                     <SelectItem value="r&m">R & M</SelectItem>
                     <SelectItem value="stores&spares">Stores & spares</SelectItem>
 
                 </SelectContent>
             </Select>
-            <Select>
+            <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
                 <SelectTrigger className="w-[180px] border-accent">
                     <SelectValue placeholder="Project Status" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="inprogress">In Progress</SelectItem>
-                    <SelectItem value="success">success</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="ongoing">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
 
                 </SelectContent>
             </Select>
-            <Select>
+            <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
                 <SelectTrigger className="w-[180px] border-accent">
                     <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value="all">All Years</SelectItem>
                     <SelectItem value="2025">2025</SelectItem>
                     <SelectItem value="2024">2024</SelectItem>
                     <SelectItem value="2023">2023</SelectItem>
@@ -70,16 +74,18 @@ const Selectbar = ({
 
                 </SelectContent>
             </Select>
-            <Select>
+            <Select value={filters.month} onValueChange={(value) => handleFilterChange('month', value)}>
                 <SelectTrigger className="w-[180px] border-accent">
                     <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value="all">All months</SelectItem>
                     <SelectItem value="January">January</SelectItem>
                     <SelectItem value="February">February</SelectItem>
                     <SelectItem value="March">March</SelectItem>
                     <SelectItem value="April">April</SelectItem>
                     <SelectItem value="May">May</SelectItem>
+                    <SelectItem value="June">June</SelectItem>
                     <SelectItem value="July">July</SelectItem>
                     <SelectItem value="August">August</SelectItem>
                     <SelectItem value="September">September</SelectItem>

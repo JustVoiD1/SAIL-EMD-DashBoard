@@ -25,6 +25,7 @@ export interface ProjectNew {
   end_date: string,
   image_url: string,
   video_url: string,
+  remark: string,
 
 }
 

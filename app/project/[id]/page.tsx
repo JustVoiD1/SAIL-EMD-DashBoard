@@ -1,96 +1,97 @@
 'use client'
-
+import StickyHeader from '@/app/components/StickyHeader';
+import { Project, ProjectNew } from '@/lib/types';
+import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-
 import { Cell, Pie, PieChart, LineChart, BarChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
-import StickyHeader from '../components/StickyHeader';
+
 
 type TooltipPayload = ReadonlyArray<any>;
 
 type Coordinate = {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 };
 
 type PieSectorData = {
-    percent?: number;
-    name?: string | number;
-    midAngle?: number;
-    middleRadius?: number;
-    tooltipPosition?: Coordinate;
-    value?: number;
-    paddingAngle?: number;
-    dataKey?: string;
-    payload?: any;
-    tooltipPayload?: ReadonlyArray<TooltipPayload>;
+  percent?: number;
+  name?: string | number;
+  midAngle?: number;
+  middleRadius?: number;
+  tooltipPosition?: Coordinate;
+  value?: number;
+  paddingAngle?: number;
+  dataKey?: string;
+  payload?: any;
+  tooltipPayload?: ReadonlyArray<TooltipPayload>;
 };
 
 type GeometrySector = {
-    cx: number;
-    cy: number;
-    innerRadius: number;
-    outerRadius: number;
-    startAngle: number;
-    endAngle: number;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
 };
 
 type PieLabelProps = PieSectorData &
-    GeometrySector & {
-        tooltipPayload?: any;
-    };
+  GeometrySector & {
+    tooltipPayload?: any;
+  };
 
 
 const BarData = [
-    {
-        name: 'Jan',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: 'Feb',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-    },
-    {
-        name: 'March',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
-    },
-    {
-        name: 'April',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-    },
-    // {
-    //     name: 'May',
-    //     uv: 1890,
-    //     pv: 4800,
-    //     amt: 2181,
-    // },
-    // {
-    //     name: 'June',
-    //     uv: 2390,
-    //     pv: 3800,
-    //     amt: 2500,
-    // },
-    // {
-    //     name: 'July',
-    //     uv: 3490,
-    //     pv: 4300,
-    //     amt: 2100,
-    // },
+  {
+    name: 'Jan',
+    uv: 4000,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: 'Feb',
+    uv: 3000,
+    pv: 1398,
+    amt: 2210,
+  },
+  {
+    name: 'March',
+    uv: 2000,
+    pv: 9800,
+    amt: 2290,
+  },
+  {
+    name: 'April',
+    uv: 2780,
+    pv: 3908,
+    amt: 2000,
+  },
+  // {
+  //     name: 'May',
+  //     uv: 1890,
+  //     pv: 4800,
+  //     amt: 2181,
+  // },
+  // {
+  //     name: 'June',
+  //     uv: 2390,
+  //     pv: 3800,
+  //     amt: 2500,
+  // },
+  // {
+  //     name: 'July',
+  //     uv: 3490,
+  //     pv: 4300,
+  //     amt: 2100,
+  // },
 ];
 
 
 const PieData = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
+  { name: 'Group A', value: 400 },
+  { name: 'Group B', value: 300 },
+  { name: 'Group C', value: 300 },
+  { name: 'Group D', value: 200 },
 ];
 
 
@@ -98,58 +99,86 @@ const RADIAN = Math.PI / 180;
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelProps) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-    const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
-    return (
-        <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-            {`${((percent ?? 1) * 100).toFixed(0)}%`}
-        </text>
-    );
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${((percent ?? 1) * 100).toFixed(0)}%`}
+    </text>
+  );
 };
 
 
-export default function DemoProject() {
+
+const page = () => {
+  const { id } = useParams()
+  const [project, setProject] = useState<ProjectNew | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
 
-    const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-    // Initialize dark mode from localStorage or system preference
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // Initialize dark mode from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-            setIsDarkMode(true);
-            document.documentElement.classList.add('dark');
-        } else {
-            setIsDarkMode(false);
-            document.documentElement.classList.remove('dark');
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`/api/projects/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setProject(data.project)
+
         }
-    }, []);
+        else {
+          setError('Project not found')
 
-    // Toggle dark mode
-    // const toggleDarkMode = () => {
-    //     const newDarkMode = !isDarkMode;
-    //     setIsDarkMode(newDarkMode);
+        }
+      } catch (err) {
+        setError("Failed to Fetch Project")
+      } finally {
+        setLoading(false)
+      }
+    }
 
-    //     if (newDarkMode) {
-    //         document.documentElement.classList.add('dark');
-    //         localStorage.setItem('theme', 'dark');
-    //     } else {
-    //         document.documentElement.classList.remove('dark');
-    //         localStorage.setItem('theme', 'light');
-    //     }
-    // };
+    if (id) {
+      fetchProject();
+    }
+
+  }, [id])
+
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error : {error}</div>
+  if (!project) return <div>Project Not Found</div>
 
 
+  return (<>
 
-    return (<>
-
-        <header>
+   <header>
             <StickyHeader />
-            <h1 className="px-3 py-2 text-2xl font-bold text-foreground text-left">Smart City Infrastructure Development</h1>
+            <h1 className="px-3 py-2 text-2xl font-bold text-foreground text-left">{project.title}</h1>
 
         </header>
         <div className="bg h-screen w-screen bg-background overflow-y-auto flex flex-col">
@@ -219,26 +248,12 @@ export default function DemoProject() {
                         <div className="h-full overflow-y-auto">
                             <p className="text-muted-foreground leading-relaxed text-sm mb-4">
 
-                                The Smart City Infrastructure Development project represents a comprehensive initiative to modernize
-                                urban infrastructure through the integration of cutting-edge technology and sustainable practices.
-                                This ambitious undertaking focuses on creating intelligent transportation systems, energy-efficient
-                                buildings, and robust digital connectivity to enhance the quality of life for citizens.
-                            </p>
-                            <p className="text-muted-foreground leading-relaxed text-sm mb-4">
-                                Key components include the deployment of IoT sensors throughout the city for real-time monitoring
-                                of traffic patterns, air quality, and energy consumption. The project also encompasses the
-                                development of smart traffic management systems that dynamically adjust signal timing based on
-                                current conditions, reducing congestion and improving emergency response times.
-                            </p>
-                            <p className="text-muted-foreground leading-relaxed text-sm mb-3">
-                                Environmental sustainability is at the core of this initiative, with plans for renewable energy
-                                integration, waste management optimization, and green building standards. The infrastructure will
-                                support electric vehicle charging networks and promote eco-friendly transportation alternatives.
+                                {project.desc}
                             </p>
                             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Expected Outcomes:</h3>
+                                <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Remarks:</h3>
                                 <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-                                    <li>• 30% reduction in traffic congestion</li>
+                                    <li>• {project.remark}</li>
                                     <li>• 25% improvement in energy efficiency</li>
                                     <li>• Enhanced emergency response capabilities</li>
                                     <li>• Improved citizen satisfaction and quality of life</li>
@@ -300,9 +315,9 @@ export default function DemoProject() {
                                 <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
                                 <div className="flex items-center space-x-2">
                                     <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div className="bg-yellow-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+                                        <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${project.progress}%` }}></div>
                                     </div>
-                                    <span className="text-sm font-medium">75%</span>
+                                    <span className="text-sm font-medium">{project.progress}%</span>
                                 </div>
                             </div>
                         </div>
@@ -330,5 +345,8 @@ export default function DemoProject() {
                 </div>
             </div>
         </div>
-    </>);
+
+  </>)
 }
+
+export default page

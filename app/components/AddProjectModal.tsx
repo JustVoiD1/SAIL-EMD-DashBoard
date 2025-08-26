@@ -102,7 +102,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
       ></div>
 
       {/* Modal */}
-      <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
+      <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto m-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-foreground">Add New Project</h2>
           <button
@@ -131,7 +131,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-medium text-foreground mb-1">
               Description *
             </label>
             <textarea
@@ -139,131 +139,137 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               rows={3}
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="max-h-[7vh] w-full px-3 py-1 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter project description"
             />
           </div>
           {/* Region */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Region *
-            </label>
-            <select
-              required
-              value={formData.region}
-              onChange={(e) => handleInputChange('region', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="HQ">HQ</option>
-              <option value="ER">ER</option>
-              <option value="NR">NR</option>
-              <option value="SR">SR</option>
-              <option value="WR">WR</option>
-            </select>
-          </div>
-
-          {/* Type */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Type *
-            </label>
-            <select
-              required
-              value={formData.type}
-              onChange={(e) => handleInputChange('type', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Capital">Capital</option>
-              <option value="R & M">R & M</option>
-              <option value="Stores & Spares">Stores & Spares</option>
-            </select>
-          </div>
-
-
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Status
-            </label>
-            <select
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="ongoing">Ongoing</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-
-          {/* Progress */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Progress (%)
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              value={formData.progress}
-              onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0"
-            />
-          </div>
-
-          {/* Stage II Work Order */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Stage II WO Amount (₹)
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={formData.stage_ii_wo}
-              onChange={(e) => handleInputChange('stage_ii_wo', parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0"
-            />
-          </div>
-
-          {/* Bill Released */}
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Bill Released Amount (₹)
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={formData.bill_released}
-              onChange={(e) => handleInputChange('bill_released', parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0"
-            />
-          </div>
-
-          {/* Dates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-4 gap-4'>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Start Date
+                Region *
+              </label>
+              <select
+                required
+                value={formData.region}
+                onChange={(e) => handleInputChange('region', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="hq">HQ</option>
+                <option value="er">ER</option>
+                <option value="nr">NR</option>
+                <option value="sr">SR</option>
+                <option value="wr">WR</option>
+              </select>
+            </div>
+
+            {/* Type */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Type *
+              </label>
+              <select
+                required
+                value={formData.type}
+                onChange={(e) => handleInputChange('type', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="capital">Capital</option>
+                <option value="r&m">R & M</option>
+                <option value="stores&spares">Stores & Spares</option>
+              </select>
+            </div>
+
+
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Status
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) => handleInputChange('status', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="ongoing">Ongoing</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            {/* Progress */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Progress (%)
               </label>
               <input
-                type="date"
-                value={formData.start_date}
-                onChange={(e) => handleInputChange('start_date', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="number"
+                min="0"
+                max="100"
+                value={formData.progress}
+                onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
               />
             </div>
+          </div>
+
+
+          {/* Stage II Work Order */}
+          <div className='grid xs:grid-cols-2 sm:grid-cols-3 gap-4'>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                End Date
+                Stage II WO Amount (₹)
               </label>
               <input
-                type="date"
-                value={formData.end_date}
-                onChange={(e) => handleInputChange('end_date', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="number"
+                min="0"
+                value={formData.stage_ii_wo}
+                onChange={(e) => handleInputChange('stage_ii_wo', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
               />
+            </div>
+
+            {/* Bill Released */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Bill Released Amount (₹)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.bill_released}
+                onChange={(e) => handleInputChange('bill_released', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="0"
+              />
+            </div>
+
+            {/* Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.start_date}
+                  onChange={(e) => handleInputChange('start_date', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.end_date}
+                  onChange={(e) => handleInputChange('end_date', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             </div>
           </div>
 
@@ -304,7 +310,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               rows={2}
               value={formData.remark}
               onChange={(e) => handleInputChange('remark', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="max-h-[5vh] overflow-y-clip w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter any remarks"
             />
           </div>

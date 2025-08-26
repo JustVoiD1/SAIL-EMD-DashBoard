@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
         }
         await pgClient.connect();
 
-        const projectsQuery = `select *  from projects where worker_id = $1`;
+        const projectsQuery = `select * from projects where worker_id = $1 order by id desc`;
         let response = await pgClient.query(projectsQuery, [userId]);
 
 

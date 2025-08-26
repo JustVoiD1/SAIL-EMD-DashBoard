@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -36,7 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import SelectBar from "@/app/components/SelectBar"
-import { Project } from "@/lib/types"
+import { FilterValues, Project } from "@/lib/types"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -187,6 +188,7 @@ export const columns: ColumnDef<Project>[] = [
     id: "select",
     header: ({ table }) => (
       <Checkbox
+        className="bg-accent"
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -197,6 +199,7 @@ export const columns: ColumnDef<Project>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
+        className="border-accent"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -205,11 +208,11 @@ export const columns: ColumnDef<Project>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "id",
-    header: "Sl No",
-    cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: "Sl No",
+  //   cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
+  // },
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -338,7 +341,7 @@ export const columns: ColumnDef<Project>[] = [
           </div>
           <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : progress >= 100 ? 'text-green-600' : 'text-foreground'
             }`}>
-            {progress}%
+            {progress}
           </span>
           {isOverdue && (
             <span className="text-xs text-red-500 font-medium">OVERDUE</span>
@@ -351,7 +354,7 @@ export const columns: ColumnDef<Project>[] = [
     accessorKey: "remark",
     header: "Remark",
     cell: ({ row }) => (
-      <div className="max-w-[250px] truncate" title={row.getValue("remark")}>
+      <div className="max-w-[150px] truncate" title={row.getValue("remark")}>
         {row.getValue("remark")}
       </div>
     ),
@@ -379,41 +382,41 @@ export const columns: ColumnDef<Project>[] = [
       return <div>{formatted}</div>
     },
   },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const project = row.original
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const project = row.original
 
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuItem
-  //             onClick={() => navigator.clipboard.writeText(project.stageIIWO.toString())}
-  //           >
-  //             Copy WO Amount
-  //           </DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem>View project details</DropdownMenuItem>
-  //           <DropdownMenuItem>Edit project</DropdownMenuItem>
-  //           <DropdownMenuItem>Update progress</DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     )
-  //   },
-  // },
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem><Link href={`/demoproject`}>View project details</Link></DropdownMenuItem>
+            <DropdownMenuItem>Edit project</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(project.stageIIWO.toString())}
+            >
+              Copy WO Amount
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  },
 ]
 
 interface ProjectsTableProps {
   projects : any
   searchValue?: string
+  selectBarFilters?:FilterValues
   columnVisibility?: VisibilityState
   onColumnVisibilityChange?: (visibility: VisibilityState) => void
   onTableInstanceReady?: (table: any) => void
@@ -422,6 +425,7 @@ interface ProjectsTableProps {
 export default function ProjectsTable({
   projects,
   searchValue = "",
+  selectBarFilters={},
   columnVisibility: externalColumnVisibility,
   onColumnVisibilityChange,
   onTableInstanceReady
@@ -436,11 +440,42 @@ export default function ProjectsTable({
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(externalColumnVisibility || {})
   const [rowSelection, setRowSelection] = useState({})
+  const router = useRouter()
 
   // update the data array
   useEffect(() => {
-  setData(projects || []);
-}, [projects]);
+    if(!projects) {
+      setData([]);
+      return;
+    }
+
+    let filteredData = [...projects]
+
+    if(selectBarFilters?.region && selectBarFilters.region !== "all"){
+      filteredData = filteredData.filter(p => p.region === selectBarFilters.region)
+    }
+    if(selectBarFilters?.type && selectBarFilters.type !== "all"){
+      filteredData = filteredData.filter(p => p.type === selectBarFilters.type)
+    }
+    if(selectBarFilters?.status && selectBarFilters.status !== "all"){
+      filteredData = filteredData.filter(p => p.status === selectBarFilters.status)
+    }
+    if(selectBarFilters?.year && selectBarFilters.year !== "all"){
+      filteredData = filteredData.filter(p => {
+        const projectYear = new Date(p.start_date).getFullYear().toString()
+        return projectYear === selectBarFilters.year;
+      })
+    }
+    if(selectBarFilters?.month && selectBarFilters.month !== "all"){
+      filteredData = filteredData.filter(p => {
+        const projectMonth = new Date(p.start_date).toLocaleString('default', {month : 'long'})
+        return projectMonth === selectBarFilters.month;
+      })
+    }
+   
+    setData(filteredData)
+
+  }, [projects, selectBarFilters]);
 
   // Handle external column visibility changes
   useEffect(() => {
@@ -449,7 +484,9 @@ export default function ProjectsTable({
     }
   }, [externalColumnVisibility])
 
-  console.log(projects)
+  useEffect(()=>{console.log(projects)}, [projects])
+  
+
   // Handle column visibility changes
   const handleColumnVisibilityChange = useCallback((updaterOrValue: any) => {
     if (typeof updaterOrValue === 'function') {
@@ -559,12 +596,12 @@ export default function ProjectsTable({
                   
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        <Link href={'/demoproject'}>
+                       
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                        </Link>
+                        
                       </TableCell>
                     ))}
                 
