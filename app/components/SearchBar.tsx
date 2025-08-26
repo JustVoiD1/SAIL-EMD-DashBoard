@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 
 
-const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAction<Project[]>> }) => {
+const SearchBar = ({ setResults }: { setResults: React.Dispatch<React.SetStateAction<Project1[]>> }) => {
     const [inputVal, setInputVal] = useState("");
     const [allProjects, setAllProjects] = useState<Project1[]>([]); // Store all projects from API
     const [isLoading, setIsLoading] = useState(false);

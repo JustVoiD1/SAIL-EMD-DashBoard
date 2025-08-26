@@ -5,7 +5,7 @@ export interface Project1 {
   description: string | null
   region: "HQ" | "ER" | "NR" | "SR" | "WR"
   type: "Capital" | "R & M" | "Stores & Spares"
-  status: "Completed" | "Ongoing"
+  status: "completed" | "ongoing"
   progress: number
   start_date: string
   end_date: string
@@ -23,7 +23,7 @@ export interface ProjectFormData{
   description: string
   region: "HQ" | "ER" | "NR" | "SR" | "WR"
   type: "Capital" | "R & M" | "Stores & Spares"
-  status: "Completed" | "Ongoing"
+  status: "completed" | "ongoing"
   progress: number
   start_date: string
   end_date: string
