@@ -161,7 +161,7 @@ const page = () => {
 
         }
       } catch (err) {
-        setError("Failed to Fetch Project: ", err)
+        setError("Failed to Fetch Project")
       } finally {
         setLoading(false)
       }
