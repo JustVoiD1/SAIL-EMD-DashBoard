@@ -60,7 +60,11 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
 
 
 
-export const createColumns = (handleEditProject: (project: Project1) => void): ColumnDef<ProjectFormData | any>[] => [
+export const createColumns = (
+  handleEditProject: (project: Project1) => void,
+  handleDeleteProject: (project: Project1) => void,
+
+): ColumnDef<ProjectFormData | any>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -280,6 +284,7 @@ export const createColumns = (handleEditProject: (project: Project1) => void): C
             <DropdownMenuSeparator />
             <DropdownMenuItem><Link href={`/project/${project.id}`}>View project details</Link></DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleEditProject(project)}>Edit project</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteProject(project)}>Delete project</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(project.stage_ii_wo.toString())}
             >
@@ -338,7 +343,40 @@ export default function ProjectsTable({
     window.location.reload();
   }, [handleCloseEditModal])
 
-  const columns = useMemo(() => createColumns(handleEditProject), [handleEditProject])
+
+  const handleDeleteProject = useCallback(async (project: Project1) => {
+    if (!window.confirm(`Are you sure you want to delete "${project.title}"?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/projects/${project.id}`, 
+        {
+          method : 'DELETE',
+          headers : {
+            "Authorization" : `Bearer ${token}`
+          }
+        }
+      );
+
+      if(response.ok){
+        const result = await response.json();
+        if(result.success){
+          alert('Project Deleted Successfully');
+          window.location.reload();
+        }
+        else{
+          throw new Error('Failed to delete Project');
+        }
+      }
+      
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete Projeect');
+    }
+
+  }, [])
+
+  const columns = useMemo(() => createColumns(handleEditProject, handleDeleteProject), [handleEditProject, handleDeleteProject])
 
   // update the data array
   const data = useMemo(() => {
@@ -424,16 +462,16 @@ export default function ProjectsTable({
     [],
   )
 
-const handleColumnVisibilityChange = useCallback(
-  (updaterOrValue: VisibilityState | ((old: VisibilityState) => VisibilityState)) => {
-    if (typeof updaterOrValue === 'function') {
-      setColumnVisibility(updaterOrValue);
-    } else {
-      setColumnVisibility(updaterOrValue);
-    }
-  }, 
-  []
-)
+  const handleColumnVisibilityChange = useCallback(
+    (updaterOrValue: VisibilityState | ((old: VisibilityState) => VisibilityState)) => {
+      if (typeof updaterOrValue === 'function') {
+        setColumnVisibility(updaterOrValue);
+      } else {
+        setColumnVisibility(updaterOrValue);
+      }
+    },
+    []
+  )
 
 
 
