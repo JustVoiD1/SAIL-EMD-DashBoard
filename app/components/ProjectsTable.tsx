@@ -319,15 +319,15 @@ export default function ProjectsTable({
   )
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(externalColumnVisibility || {})
-    const [rowSelection, setRowSelection] = useState({})
-    
-    const router = useRouter()
-    
-    const handleEditProject = useCallback((project: Project1) => {
-      setEditingProject(project)
+  const [rowSelection, setRowSelection] = useState({})
+
+  const router = useRouter()
+
+  const handleEditProject = useCallback((project: Project1) => {
+    setEditingProject(project)
     setEditModalOpen(true)
   }, [])
-  
+
   const handleCloseEditModal = useCallback(() => {
     setEditModalOpen(false)
     setEditingProject(null)
@@ -337,7 +337,7 @@ export default function ProjectsTable({
     handleCloseEditModal()
     window.location.reload();
   }, [handleCloseEditModal])
-  
+
   const columns = useMemo(() => createColumns(handleEditProject), [handleEditProject])
 
   // update the data array
@@ -393,35 +393,47 @@ export default function ProjectsTable({
   // Handle column visibility changes
 
   const handleSortingChange = useCallback(
-    (sorting: SortingState) => {
-      setSorting(sorting)
+    (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+      if (typeof updaterOrValue === 'function') {
+        setSorting(updaterOrValue);
+      } else {
+        setSorting(updaterOrValue);
+      }
     },
     [],
   )
 
   const handleColumnFiltersChange = useCallback(
-    (filters: ColumnFiltersState) => {
-      setColumnFilters(filters)
+    (updaterOrValue: ColumnFiltersState | ((old: ColumnFiltersState) => ColumnFiltersState)) => {
+      if (typeof updaterOrValue === 'function') {
+        setColumnFilters(updaterOrValue);
+      } else {
+        setColumnFilters(updaterOrValue);
+      }
     },
     [],
   )
-
   const handleRowSelectionChange = useCallback(
-    (selection: any) => {
-      setRowSelection(selection)
+    (updaterOrValue: Record<string, boolean> | ((old: Record<string, boolean>) => Record<string, boolean>)) => {
+      if (typeof updaterOrValue === 'function') {
+        setRowSelection(updaterOrValue);
+      } else {
+        setRowSelection(updaterOrValue);
+      }
     },
     [],
   )
 
-  const handleColumnVisibilityChange = useCallback((updaterOrValue: any) => {
+const handleColumnVisibilityChange = useCallback(
+  (updaterOrValue: VisibilityState | ((old: VisibilityState) => VisibilityState)) => {
     if (typeof updaterOrValue === 'function') {
-      // If it's an updater function, call it with current state
-      setColumnVisibility(updaterOrValue)
+      setColumnVisibility(updaterOrValue);
     } else {
-      // If it's a direct value
-      setColumnVisibility(updaterOrValue)
+      setColumnVisibility(updaterOrValue);
     }
-  }, [])
+  }, 
+  []
+)
 
 
 
