@@ -1,10 +1,11 @@
 'use client'
+import { Project1 } from '@/lib/types';
 import React, { useState } from 'react'
 
 interface AddProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProjectAdded: (project: any) => void;
+  onProjectAdded: (project: Project1) => void;
 }
 
 const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalProps) => {

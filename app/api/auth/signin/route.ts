@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
         const searchQuery = `select id, username, password from admins where username = $1`;
 
-        let response = await pgClient.query(searchQuery, [username]);
+        const response = await pgClient.query(searchQuery, [username]);
         
         // No such user exists
         if (response.rows.length === 0) {

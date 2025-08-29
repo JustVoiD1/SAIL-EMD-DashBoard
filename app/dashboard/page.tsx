@@ -2,11 +2,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import ProjectCard from '../components/ProjectCard';
-import GlobalStatCard from '../components/GlobalStatCard';
+
+
 import { FilterValues, Project1 } from '@/lib/types';
-import SearchBar from '../components/SearchBar';
-import SearchResultList from '../components/SearchResultList';
+
 import AddProjectModal from '../components/AddProjectModal';
 import CreateIcon from '../components/Icons/CreateIcon';
 import Selectbar from '../components/SelectBar';
