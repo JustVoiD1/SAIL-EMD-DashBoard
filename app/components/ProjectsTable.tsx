@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import {
   ColumnDef,
@@ -14,20 +14,18 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -36,8 +34,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import SelectBar from "@/app/components/SelectBar"
 import { FilterValues, Project1, ProjectFormData } from "@/lib/types"
+import EditProjectModal from "./EditProjectModal"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -58,134 +56,11 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
 
 
 
-// const data: Project[] = [
-//   {
-//     slNo: 1,
-//     projectName: "Smart City Infrastructure Development",
-//     startDate: "2024-01-15",
-//     stageIIWO: 2500000, // ₹25 Lakhs
-//     completionDateAsPerWO: "2025-12-31", // Future date
-//     billReleased: 1875000, // ₹18.75 Lakhs (75% of WO amount)
-//     deadlineProgress: calculateDeadlineProgress("2024-01-15", "2025-12-31"),
-//     remark: "On track, minor delays in material procurement",
-//   },
-//   {
-//     slNo: 2,
-//     projectName: "Highway Extension Project Phase II",
-//     startDate: "2024-03-01",
-//     stageIIWO: 5000000, // ₹50 Lakhs
-//     completionDateAsPerWO: "2026-03-15", // Future date
-//     billReleased: 0, // No bill released yet
-//     deadlineProgress: calculateDeadlineProgress("2024-03-01", "2026-03-15"),
-//     remark: "Pending environmental clearance",
-//   },
-//   {
-//     slNo: 3,
-//     projectName: "Metro Rail Connectivity",
-//     startDate: "2024-02-10",
-//     stageIIWO: 7500000, // ₹75 Lakhs
-//     completionDateAsPerWO: "2025-11-30", // Future date
-//     billReleased: 6750000, // ₹67.5 Lakhs (90% of WO amount)
-//     deadlineProgress: calculateDeadlineProgress("2024-02-10", "2025-11-30"),
-//     remark: "Ahead of schedule, testing phase initiated",
-//   },
-//   {
-//     slNo: 4,
-//     projectName: "Water Treatment Plant Upgrade",
-//     startDate: "2024-01-01",
-//     stageIIWO: 3000000, // ₹30 Lakhs
-//     completionDateAsPerWO: "2025-07-20", // Past date - should be overdue
-//     billReleased: 3000000, // ₹30 Lakhs (100% - project completed)
-//     deadlineProgress: calculateDeadlineProgress("2024-01-01", "2025-07-20"),
-//     remark: "Project completed successfully",
-//   },
-//   {
-//     slNo: 5,
-//     projectName: "Digital Governance Platform",
-//     startDate: "2024-04-01",
-//     stageIIWO: 4000000, // ₹40 Lakhs
-//     completionDateAsPerWO: "2025-09-30", // Future date  
-//     billReleased: 1200000, // ₹12 Lakhs (30% of WO amount)
-//     deadlineProgress: calculateDeadlineProgress("2024-04-01", "2025-09-30"),
-//     remark: "Initial development phase, vendor selection pending",
-//   },
-//   {
-//     slNo: 6,
-//     projectName: "Renewable Energy Grid Integration",
-//     startDate: "2024-01-20",
-//     stageIIWO: 6000000, // ₹60 Lakhs
-//     completionDateAsPerWO: "2025-06-15", // Past date - should be overdue
-//     billReleased: 3600000, // ₹36 Lakhs (60% of WO amount)
-//     deadlineProgress: calculateDeadlineProgress("2024-01-20", "2025-06-15"),
-//     remark: "Grid testing in progress, facing technical delays",
-//   },
-//   {
-//     slNo: 7,
-//     projectName: "Urban Traffic Management System",
-//     startDate: "2024-05-10",
-//     stageIIWO: 2000000, // ₹20 Lakhs
-//     completionDateAsPerWO: "2025-10-15",
-//     billReleased: 1000000, // ₹10 Lakhs (50%)
-//     deadlineProgress: calculateDeadlineProgress("2024-05-10", "2025-10-15"),
-//     remark: "Installation of surveillance units ongoing",
-//   },
-//   {
-//     slNo: 8,
-//     projectName: "Rural Electrification Expansion",
-//     startDate: "2023-12-01",
-//     stageIIWO: 4500000, // ₹45 Lakhs
-//     completionDateAsPerWO: "2025-08-10", // Just passed
-//     billReleased: 3375000, // ₹33.75 Lakhs (75%)
-//     deadlineProgress: calculateDeadlineProgress("2023-12-01", "2025-08-10"),
-//     remark: "Final phase completed, awaiting inspection",
-//   },
-//   {
-//     slNo: 9,
-//     projectName: "Smart Irrigation Network",
-//     startDate: "2024-06-01",
-//     stageIIWO: 5500000, // ₹55 Lakhs
-//     completionDateAsPerWO: "2026-01-15",
-//     billReleased: 2750000, // ₹27.5 Lakhs (50%)
-//     deadlineProgress: calculateDeadlineProgress("2024-06-01", "2026-01-15"),
-//     remark: "Pilot installations under review",
-//   },
-//   {
-//     slNo: 10,
-//     projectName: "Municipal Solid Waste Management",
-//     startDate: "2024-02-20",
-//     stageIIWO: 3500000, // ₹35 Lakhs
-//     completionDateAsPerWO: "2025-12-01",
-//     billReleased: 2450000, // ₹24.5 Lakhs (70%)
-//     deadlineProgress: calculateDeadlineProgress("2024-02-20", "2025-12-01"),
-//     remark: "Procurement completed, site works ongoing",
-//   },
-//   {
-//     slNo: 11,
-//     projectName: "e-Learning Infrastructure for Schools",
-//     startDate: "2024-07-01",
-//     stageIIWO: 2500000, // ₹25 Lakhs
-//     completionDateAsPerWO: "2025-10-31",
-//     billReleased: 500000, // ₹5 Lakhs (20%)
-//     deadlineProgress: calculateDeadlineProgress("2024-07-01", "2025-10-31"),
-//     remark: "Hardware procurement in progress",
-//   },
-//   {
-//     slNo: 12,
-//     projectName: "Public Wi-Fi Expansion Project",
-//     startDate: "2024-01-05",
-//     stageIIWO: 3000000, // ₹30 Lakhs
-//     completionDateAsPerWO: "2025-08-15", // Yesterday
-//     billReleased: 2700000, // ₹27 Lakhs (90%)
-//     deadlineProgress: calculateDeadlineProgress("2024-01-05", "2025-08-15"),
-//     remark: "Almost complete, final testing remaining",
-//   },
-// ]
-
-// const data : Project[] = []
 
 
 
-export const columns: ColumnDef<ProjectFormData | any>[] = [
+
+export const createColumns = (handleEditProject: (project: Project1) => void): ColumnDef<ProjectFormData | any>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -388,10 +263,9 @@ export const columns: ColumnDef<ProjectFormData | any>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const project : Project1 = row.original
-      console.log('Available project data:', project); // Check what's available
-      console.log('Row values:', row.getAllCells().map(cell => ({ id: cell.column.id, value: cell.getValue() })));
-  
+      const project: Project1 = row.original
+
+
 
       return (
         <DropdownMenu>
@@ -405,7 +279,7 @@ export const columns: ColumnDef<ProjectFormData | any>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem><Link href={`/project/${project.id}`}>View project details</Link></DropdownMenuItem>
-            <DropdownMenuItem>Edit project</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEditProject(project)}>Edit project</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(project.stage_ii_wo.toString())}
             >
@@ -419,9 +293,9 @@ export const columns: ColumnDef<ProjectFormData | any>[] = [
 ]
 
 interface ProjectsTableProps {
-  projects : any
+  projects: any
   searchValue?: string
-  selectBarFilters?:FilterValues
+  selectBarFilters?: FilterValues
   columnVisibility?: VisibilityState
   onColumnVisibilityChange?: (visibility: VisibilityState) => void
   onTableInstanceReady?: (table: any) => void
@@ -430,13 +304,14 @@ interface ProjectsTableProps {
 export default function ProjectsTable({
   projects,
   searchValue = "",
-  selectBarFilters={},
+  selectBarFilters = {},
   columnVisibility: externalColumnVisibility,
   onColumnVisibilityChange,
   onTableInstanceReady
 }: ProjectsTableProps) {
-  const [data, setData] = useState<Project1[]>(projects)
-  console.log('Data : ',data)
+
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editingProject, setEditingProject] = useState<Project1 | null>(null)
   // setData(projects);
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
@@ -444,43 +319,67 @@ export default function ProjectsTable({
   )
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(externalColumnVisibility || {})
-  const [rowSelection, setRowSelection] = useState({})
-  const router = useRouter()
+    const [rowSelection, setRowSelection] = useState({})
+    
+    const router = useRouter()
+    
+    const handleEditProject = useCallback((project: Project1) => {
+      setEditingProject(project)
+    setEditModalOpen(true)
+  }, [])
+  
+  const handleCloseEditModal = useCallback(() => {
+    setEditModalOpen(false)
+    setEditingProject(null)
+  }, [])
+
+  const handleProjectUpdated = useCallback(() => {
+    handleCloseEditModal()
+    window.location.reload();
+  }, [handleCloseEditModal])
+  
+  const columns = useMemo(() => createColumns(handleEditProject), [handleEditProject])
 
   // update the data array
-  useEffect(() => {
-    if(!projects) {
-      setData([]);
-      return;
+  const data = useMemo(() => {
+    if (!projects) {
+
+      return [];
     }
 
     let filteredData = [...projects]
 
-    if(selectBarFilters?.region && selectBarFilters.region !== "all"){
+    if (selectBarFilters?.region && selectBarFilters.region !== "all") {
       filteredData = filteredData.filter(p => p.region === selectBarFilters.region)
     }
-    if(selectBarFilters?.type && selectBarFilters.type !== "all"){
+    if (selectBarFilters?.type && selectBarFilters.type !== "all") {
       filteredData = filteredData.filter(p => p.type === selectBarFilters.type)
     }
-    if(selectBarFilters?.status && selectBarFilters.status !== "all"){
+    if (selectBarFilters?.status && selectBarFilters.status !== "all") {
       filteredData = filteredData.filter(p => p.status === selectBarFilters.status)
     }
-    if(selectBarFilters?.year && selectBarFilters.year !== "all"){
+    if (selectBarFilters?.year && selectBarFilters.year !== "all") {
       filteredData = filteredData.filter(p => {
         const projectYear = new Date(p.start_date).getFullYear().toString()
         return projectYear === selectBarFilters.year;
       })
     }
-    if(selectBarFilters?.month && selectBarFilters.month !== "all"){
+    if (selectBarFilters?.month && selectBarFilters.month !== "all") {
       filteredData = filteredData.filter(p => {
-        const projectMonth = new Date(p.start_date).toLocaleString('default', {month : 'long'})
+        const projectMonth = new Date(p.start_date).toLocaleString('default', { month: 'long' })
         return projectMonth === selectBarFilters.month;
       })
     }
-   
-    setData(filteredData)
 
-  }, [projects, selectBarFilters]);
+    return filteredData;
+
+  }, [projects,
+    selectBarFilters?.region,
+    selectBarFilters?.type,
+    selectBarFilters?.status,
+    selectBarFilters?.year,
+    selectBarFilters?.month,
+  ]);
 
   // Handle external column visibility changes
   useEffect(() => {
@@ -489,10 +388,31 @@ export default function ProjectsTable({
     }
   }, [externalColumnVisibility])
 
-  useEffect(()=>{console.log(projects)}, [projects])
-  
+
 
   // Handle column visibility changes
+
+  const handleSortingChange = useCallback(
+    (sorting: SortingState) => {
+      setSorting(sorting)
+    },
+    [],
+  )
+
+  const handleColumnFiltersChange = useCallback(
+    (filters: ColumnFiltersState) => {
+      setColumnFilters(filters)
+    },
+    [],
+  )
+
+  const handleRowSelectionChange = useCallback(
+    (selection: any) => {
+      setRowSelection(selection)
+    },
+    [],
+  )
+
   const handleColumnVisibilityChange = useCallback((updaterOrValue: any) => {
     if (typeof updaterOrValue === 'function') {
       // If it's an updater function, call it with current state
@@ -503,6 +423,8 @@ export default function ProjectsTable({
     }
   }, [])
 
+
+
   // Sync column visibility with parent component
   useEffect(() => {
     onColumnVisibilityChange?.(columnVisibility)
@@ -511,14 +433,14 @@ export default function ProjectsTable({
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: handleSortingChange,
+    onColumnFiltersChange: handleColumnFiltersChange,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: handleColumnVisibilityChange,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: handleRowSelectionChange,
     state: {
       sorting,
       columnFilters,
@@ -526,7 +448,6 @@ export default function ProjectsTable({
       rowSelection,
     },
   })
-
   // Share table instance with parent
   useEffect(() => {
     onTableInstanceReady?.(table)
@@ -598,18 +519,18 @@ export default function ProjectsTable({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                       
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                        
-                      </TableCell>
-                    ))}
-                
+
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+
+                    </TableCell>
+                  ))}
+
                 </TableRow>
               ))
             ) : (
@@ -650,6 +571,12 @@ export default function ProjectsTable({
         </div>
       </div>
     </div>
+    <EditProjectModal
+      isOpen={editModalOpen}
+      onClose={handleCloseEditModal}
+      onProjectUpdated={handleProjectUpdated}
+      project={editingProject}
+    />
 
   </>)
 }
