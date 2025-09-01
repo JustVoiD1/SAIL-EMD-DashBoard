@@ -177,7 +177,7 @@ export default function Dashboard() {
                 className="py-3 px-4 text-center text-xs rounded-full bg-background/20 border border-border hover:bg-background/30 transition-all duration-500 hover:scale-110"
 
               >
-                {user.username[0].toUpperCase()}
+                {user?.username[0].toUpperCase()}
               </button>
               {/* Dark Mode Toggle */}
               <button

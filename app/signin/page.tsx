@@ -98,7 +98,7 @@ export default function SignInModal() {
                 
                 // Test if cookie was actually set
                 const cookies = document.cookie.split(';');
-                const tokenCookie = cookies.find(c => c.trim().startsWith('token='));
+                // const tokenCookie = cookies.find(c => c.trim().startsWith('token='));
 
                 // Redirect to dashboard
                 
