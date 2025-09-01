@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useCallback, useEffect, useMemo } from "react"
-import { useRouter } from "next/navigation"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -39,9 +38,10 @@ import EditProjectModal from "./EditProjectModal"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
-  const currentDate = new Date('2025-08-15'); // Current date
+  const currentDate = new Date(); // Current date
   const projectStartDate = new Date(startDate);
   const projectEndDate = new Date(completionDate);
+  if(projectStartDate == projectEndDate) return 100;
 
   const totalDuration = projectEndDate.getTime() - projectStartDate.getTime();
   const elapsedDuration = currentDate.getTime() - projectStartDate.getTime();
@@ -206,10 +206,11 @@ export const createColumns = (
       )
     },
     cell: ({ row }) => {
-      const progress = row.getValue("deadline_progress") as number
-      const completionDate = new Date(row.getValue("end_date") as string)
-      const currentDate = new Date('2025-08-15')
-      const isOverdue = currentDate > completionDate && progress < 100
+      const completionDate = row.getValue("end_date") as string
+      const startDate = row.getValue("start_date") as string
+      const currentDate = new Date()
+      const progress = calculateDeadlineProgress(startDate, completionDate);
+      const isOverdue = new Date(currentDate) > new Date(completionDate) && progress < 100
 
       return (
         <div className="flex items-center space-x-2">
@@ -298,7 +299,7 @@ export const createColumns = (
 ]
 
 interface ProjectsTableProps {
-  projects: any
+  projects: Project1[]
   searchValue?: string
   selectBarFilters?: FilterValues
   columnVisibility?: VisibilityState
@@ -326,7 +327,6 @@ export default function ProjectsTable({
     useState<VisibilityState>(externalColumnVisibility || {})
   const [rowSelection, setRowSelection] = useState({})
 
-  const router = useRouter()
 
   const handleEditProject = useCallback((project: Project1) => {
     setEditingProject(project)

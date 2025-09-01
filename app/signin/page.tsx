@@ -12,11 +12,13 @@ const imagesize : number = 60
 
 export default function SignInModal() {
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Inputs>();
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Inputs>();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+
 
     // Initialize dark mode from localStorage or system preference
     useEffect(() => {
@@ -30,7 +32,14 @@ export default function SignInModal() {
             setIsDarkMode(false);
             document.documentElement.classList.remove('dark');
         }
-    }, []);
+
+        const savedUsername = localStorage.getItem('savedUsername');
+        const rememberMeEnabled = localStorage.getItem('rememberMe') === "true";
+        if(savedUsername && rememberMeEnabled){
+            setRememberMe(true);
+            setValue("username", savedUsername)
+        }
+    }, [setValue]);
 
     // Toggle dark mode
     const toggleDarkMode = () => {
@@ -75,7 +84,17 @@ export default function SignInModal() {
                 localStorage.setItem("user", JSON.stringify(result.user));
                 
                 // Set cookie for middleware
-                document.cookie = `token=${result.token}; path=/; max-age=86400; SameSite=Lax`;
+                const maxAge = rememberMe ? 86400 * 30 : 86400;
+                document.cookie = `token=${result.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+                if(rememberMe){
+                    localStorage.setItem('rememberMe', 'true');
+                    localStorage.setItem('savedUsername', username);
+                }
+                else {
+                    localStorage.removeItem('rememberMe');
+                    localStorage.removeItem('savedUsername');
+                    
+                }
                 
                 // Test if cookie was actually set
                 const cookies = document.cookie.split(';');
@@ -226,7 +245,9 @@ export default function SignInModal() {
 
                     <div className="flex items-center justify-between text-sm">
                         <label className="flex items-center text-muted-foreground">
-                            <input type="checkbox" className="mr-2 rounded border-border" />
+                            <input type="checkbox" className="mr-2 rounded border-border" checked={rememberMe}
+                                onChange={(e)=>setRememberMe(e.target.checked)}
+                            />
                             Remember me
                         </label>
                         {/* <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors duration-200">

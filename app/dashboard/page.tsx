@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -23,9 +23,14 @@ import {
 import { ChevronDown } from 'lucide-react';
 import { VisibilityState } from "@tanstack/react-table"
 
+interface User {
+  id : number,
+  username : string
+}
+
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [results, setResults] = useState<Project1[]>([])
