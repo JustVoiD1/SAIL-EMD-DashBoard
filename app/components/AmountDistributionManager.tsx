@@ -4,113 +4,137 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 
 
 interface Distribution {
-    id: number,
-    category: string,
-    amount: number,
-    description: string
+  id: number,
+  category: string,
+  amount: number,
+  description: string
 
 }
 
 interface DistributionData {
-    distributions: Distribution[],
-    totalDistributed: number,
-    undistributed: number,
-    stageIIWO: number,
-    pieData: Array<{
-        name: string,
-        value: number,
-        color: string,
-    }>;
+  distributions: Distribution[],
+  totalDistributed: number,
+  undistributed: number,
+  stageIIWO: number,
+  pieData: Array<{
+    name: string,
+    value: number,
+    color: string,
+  }>;
 }
 
 interface AmouuntDistributionManagerProps {
-    projectId: string
+  projectId: string
 }
 const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProps) => {
-    const [data, setData] = useState<DistributionData | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const [showAddForm, setShowAddForm] = useState(false)
-    const [formData, setFormData] = useState(
+  const [data, setData] = useState<DistributionData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [formData, setFormData] = useState(
+    {
+      category: '',
+      amount: '',
+      description: ''
+    }
+  );
+  const categories = ['Material', 'Labour', 'Equipment', 'Overhead', 'Transport', 'Other'];
+
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{name: string; value: number}> }) => {
+    if (active && payload && payload.length) {
+      const categoryName = payload[0].name;
+      const value = payload[0].value;
+
+      const distribution = data?.distributions?.find(d => d.category === categoryName);
+      console.log(distribution)
+
+      return (
+        <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
+          <p className="font-semibold text-gray-800 text-md">
+            {distribution?.description || categoryName }
+          </p>
+          <p className="text-blue-600 text-sm">
+            Amount: ₹{value.toLocaleString()}
+          </p>
+          <p className="text-gray-600 text-xs">
+            Category: {categoryName}
+          </p>
+        </div>
+      );
+    }
+
+  }
+
+  const fetchDistributions = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/projects/${projectId}/distributions`,
         {
-            category: '',
-            amount: '',
-            description: ''
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+          }
         }
-    );
-    const categories = ['Material', 'Labour', 'Equipment', 'Overhead', 'Transport', 'Other'];
+      );
+      if (response.ok) {
+        const result = await response.json();
+        setData(result.data)
+      }
 
+    } catch (err) {
+      console.error('Error fetcching distributions : ', err)
 
-    const fetchDistributions = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/projects/${projectId}/distributions`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-type': 'application/json'
-                    }
-                }
-            );
-            if (response.ok) {
-                const result = await response.json();
-                setData(result.data)
-            }
-
-        } catch (err) {
-            console.error('Error fetcching distributions : ', err)
-
-        } finally {
-            setIsLoading(false)
-        }
-
+    } finally {
+      setIsLoading(false)
     }
 
-    const handleAddDistribution = async (e : React.FormEvent) => {
-        e.preventDefault();
+  }
 
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/projects/${projectId}/distributions`,
-                {
-                    method : "POST",
-                    headers : {
-                        'Authorization' : `Bearer ${token}`,
-                        'Content-type' : 'application/json'
-                    },
-                    body : JSON.stringify(
-                        {
-                            category: formData.category,
-                            amount : parseFloat(formData.amount),
-                            description : formData.description
-                        }
-                    )
-                }
+  const handleAddDistribution = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-            );
-            if(response.ok){
-                setFormData({category : '', amount : '', description : ''});
-                setShowAddForm(false);
-                fetchDistributions();
-                alert('Distribution added successfully.');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/projects/${projectId}/distributions`,
+        {
+          method: "POST",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify(
+            {
+              category: formData.category,
+              amount: parseFloat(formData.amount),
+              description: formData.description
             }
-            else{
-                const err = await response.json();
-                alert(err.error || 'Failed to add distribution')
-            }
+          )
         }
-        catch (err) {
-            console.error('Error adding distribution: ', err);
-            alert('Failed to add distribution');
-        }
-    }
 
-    useEffect(()=>{
+      );
+      if (response.ok) {
+        setFormData({ category: '', amount: '', description: '' });
+        setShowAddForm(false);
         fetchDistributions();
-    }, [projectId]);
-    if(isLoading) return <div>Loading distributions...</div>
-    if(!data) return <div>No Data available</div>
-    return (
-        <div className="space-y-6">
+        alert('Distribution added successfully.');
+      }
+      else {
+        const err = await response.json();
+        alert(err.error || 'Failed to add distribution')
+      }
+    }
+    catch (err) {
+      console.error('Error adding distribution: ', err);
+      alert('Failed to add distribution');
+    }
+  }
+
+  useEffect(() => {
+    fetchDistributions();
+  }, [projectId]);
+  if (isLoading) return <div>Loading distributions...</div>
+  if (!data) return <div>No Data available</div>
+  return (
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Amount Distribution</h2>
@@ -195,9 +219,10 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
+                {/* <Tooltip
                   formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
-                />
+                /> */}
+                <Tooltip content={<CustomTooltip/>}></Tooltip>
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -207,7 +232,7 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
         {/* Distribution Table */}
         <div className="bg-card border border-border rounded-lg p-4">
           <h3 className="text-lg font-medium mb-4">Distribution Details</h3>
-          
+
           {/* Summary */}
           <div className="space-y-2 mb-4 text-sm">
             <div className="flex justify-between">
@@ -252,7 +277,7 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
         </div>
       </div>
     </div>
-    )
+  )
 }
 
 export default AmountDistributionManager;

@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         const { title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark } = await req.json();
 
-        if (!title || !description || !region || !type) {
+        if (!title || !description == null || !region || !type) {
             return NextResponse.json(
                 { success: false, error: 'Title, description, region, and type are required' },
                 { status: 400 }

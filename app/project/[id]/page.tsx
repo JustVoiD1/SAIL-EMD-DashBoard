@@ -10,7 +10,7 @@ const calculateDeadlineProgress = (startDate: string, completionDate: string): n
   const currentDate = new Date(); // Current date
   const projectStartDate = new Date(startDate);
   const projectEndDate = new Date(completionDate);
-  if(projectStartDate == projectEndDate) return 100;
+  if (projectStartDate == projectEndDate) return 100;
 
   const totalDuration = projectEndDate.getTime() - projectStartDate.getTime();
   const elapsedDuration = currentDate.getTime() - projectStartDate.getTime();
@@ -134,89 +134,152 @@ const page = () => {
   const [project, setProject] = useState<Project1 | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isCompleted, setIsCompleted] = useState<boolean>(project?.status === 'completed');
+
   let percentage;
   if (!project) percentage = 0;
   else percentage = (parseInt(project.bill_released) * 100 / parseInt(project.stage_ii_wo)).toFixed(1);
 
+  const handleCompletionToggle = async (checked: boolean) => {
+    try {
+      const requestBody = {
+        title: project?.title,
+        description: project?.description || "", // Handle null descriptions
+        region: project?.region,
+        type: project?.type,
+        start_date: project?.start_date,
+        end_date: project?.end_date,
+        stage_ii_wo: project?.stage_ii_wo,
+        bill_released: project?.bill_released,
+        remark: project?.remark || "", // Handle null remarks
+        status: checked ? 'completed' : 'ongoing'
+      };
+      console.log('Sending req: ', requestBody);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+    if (response.ok) {
 
-  // Initialize dark mode from localStorage or system preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsCompleted(checked);
+      setProject(prev => prev ? { ...prev, status: checked ? 'completed' : 'ongoing' } : null);
+      alert(checked ? 'Project marked as completed.' : 'Project marked as ongoing.')
 
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
+
     }
-  }, []);
+    else {
+      const error = await response.json();
+      alert(error.error || 'Failed to update project status')
+    }
+  } catch (err) {
+    console.error('Error updating project status', err)
+    alert('Error updating prject status')
+  }
+}
 
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`/api/projects/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-type': 'application/json'
-          }
-        })
 
-        if (response.ok) {
-          const data = await response.json()
-          setProject(data.project)
+// Initialize dark mode from localStorage or system preference
+useEffect(() => {
+  const savedTheme = localStorage.getItem('theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+  if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+    setIsDarkMode(true);
+    document.documentElement.classList.add('dark');
+  } else {
+    setIsDarkMode(false);
+    document.documentElement.classList.remove('dark');
+  }
+}, []);
+
+
+useEffect(() => {
+  const fetchProject = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`/api/projects/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-type': 'application/json'
         }
-        else {
-          setError('Project not found')
+      })
 
-        }
-      } catch (err) {
-        setError("Failed to Fetch Project")
-        console.error(err)
-      } finally {
-        setLoading(false)
+      if (response.ok) {
+        const data = await response.json()
+        setProject(data.project)
+        setIsCompleted(data.project.status === 'completed')
+
       }
+      else {
+        setError('Project not found')
+
+      }
+    } catch (err) {
+      setError("Failed to Fetch Project")
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    if (id) {
-      fetchProject();
-    }
+  if (id) {
+    fetchProject();
+  }
 
-  }, [id])
+}, [id])
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error : {error}</div>
-  if (!project) return <div>Project Not Found</div>
+if (loading) return <div className=''>Loading...</div>
+if (error) return <div>Error : {error}</div>
+if (!project) return <div className='text-center'>Project Not Found</div>
 
 
-  return (<>
+return (<>
 
-    <header>
-      <StickyHeader />
+  <header>
+    <StickyHeader />
+    <div className='flex justify-between'>
       <h1 className="px-3 py-2 text-2xl font-bold text-foreground text-left">{project.title}</h1>
+      <div className="bg-muted/20 rounded p-3 col-span-2">
+        <label className="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isCompleted}
+            onChange={(e) => handleCompletionToggle(e.target.checked)}
+            className="h-4 w-4 rounded border-border"
+          />{ isCompleted ? <span className=" my-0 py-1 px-3 rounded-lg font-medium bg-emerald-400/50 text-foreground text-lg">
+            Completed
+          </span> : <span className="py-1 my-0 px-3 rounded-lg font-medium bg-yellow-400/50 text-foreground text-lg">
+            Ongoing
+          </span>
+          }
+        </label>
+      </div>
+    </div>
 
-    </header>
-    <div className="bg h-screen w-screen bg-background overflow-y-auto flex flex-col">
+  </header>
+  <div className="bg h-screen w-screen bg-background overflow-y-auto flex flex-col">
 
-      <div className="flex-1 p-4 grid grid-cols-12 gap-4 h-full">
-        {/* Charts Section - Takes up 8 columns */}
-        <div className="col-span-8 grid grid-rows-2 gap-4">
-          {/* Both Charts in Top Row */}
-          <div className="grid grid-cols-1 gap-4">
-            {/* <div className="grid grid-cols-2 gap-4"> */}
-            {/* PieChart */}
-            <div className="bg-card border border-border rounded-lg p-3">
-              <AmountDistributionManager projectId={id as string} />
-            </div>
+    <div className="flex-1 p-4 grid grid-cols-12 gap-4 h-full">
+      {/* Charts Section - Takes up 8 columns */}
+      <div className="col-span-8 grid grid-rows-2 gap-4">
+        {/* Both Charts in Top Row */}
+        <div className="grid grid-cols-1 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4"> */}
+          {/* PieChart */}
+          <div className="bg-card border border-border rounded-lg p-3">
+            <AmountDistributionManager projectId={id as string} />
+          </div>
 
-            {/* BarChart */}
-            {/* <div className="bg-card border border-border rounded-lg p-3">
+          {/* BarChart */}
+          {/* <div className="bg-card border border-border rounded-lg p-3">
               <h2 className="text-md font-semibold text-foreground mb-2">Physical Progress</h2>
               <div className="h-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -242,88 +305,88 @@ const page = () => {
                 </ResponsiveContainer>
               </div>
             </div> */}
-          </div>
+        </div>
 
-          {/* Description Section - Bottom Row */}
-          <div className="bg-card border border-border rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-foreground mb-3">Project Overview</h2>
-            <div className="h-full overflow-y-auto">
-              <p className="text-muted-foreground leading-relaxed text-sm mb-4">
+        {/* Description Section - Bottom Row */}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <h2 className="text-lg font-semibold text-foreground mb-3">Project Overview</h2>
+          <div className="h-full overflow-y-auto">
+            <p className="text-muted-foreground leading-relaxed text-sm mb-4">
 
-                {project.description || "No description available"}
-              </p>
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Remarks:</h3>
-                <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                  <li>• {project.remark}</li>
-                </ul>
-              </div>
+              {project.description || "No description available"}
+            </p>
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2">Remarks:</h3>
+              <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                <li>• {project.remark}</li>
+              </ul>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Project Details Section - Takes up 4 columns */}
-        <div className="col-span-4 bg-card border border-border rounded-lg p-4 overflow-y-auto">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Project Details</h2>
+      {/* Project Details Section - Takes up 4 columns */}
+      <div className="col-span-4 bg-card border border-border rounded-lg p-4 overflow-y-auto">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Project Details</h2>
 
-          <div className="space-y-4 text-sm">
-            {/* Basic Info */}
-            <div className="grid grid-cols-2 gap-3 relative">
+        <div className="space-y-4 text-sm">
+          {/* Basic Info */}
+          <div className="grid grid-cols-2 gap-3 relative">
 
-              <div className="bg-muted/20 rounded col-span-2 p-2 sticky">
-                <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${calculateDeadlineProgress(project.start_date, project.end_date)}%` }}></div>
-                  </div>
-                  <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
+            <div className="bg-muted/20 rounded col-span-2 p-2 sticky">
+              <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
+              <div className="flex items-center space-x-2">
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${calculateDeadlineProgress(project.start_date, project.end_date)}%` }}></div>
                 </div>
-              </div>
-              <div className="bg-muted/20 rounded p-2">
-                <h3 className="font-medium text-foreground text-xs mb-1">Project ID</h3>
-                <p className="text-primary font-bold">{project.id}</p>
-              </div>
-              <div className="bg-muted/20 rounded p-2">
-                <h3 className="font-medium text-foreground text-xs mb-1">Region</h3>
-                <p className="text-blue-600 font-bold">{project.region}</p>
-              </div>
-              <div className="bg-muted/20 rounded p-2">
-                <h3 className="font-medium text-foreground text-xs mb-1">Type</h3>
-                <p className="text-purple-600 font-bold">{project.type}</p>
-              </div>
-              <div className="bg-muted/20 rounded p-2">
-                <h3 className="font-medium text-foreground text-xs mb-1">Status</h3>
-                <p className="text-orange-600 font-bold">{project.status}</p>
+                <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
               </div>
             </div>
+            <div className="bg-muted/20 rounded p-2">
+              <h3 className="font-medium text-foreground text-xs mb-1">Project ID</h3>
+              <p className="text-primary font-bold">{project.id}</p>
+            </div>
+            <div className="bg-muted/20 rounded p-2">
+              <h3 className="font-medium text-foreground text-xs mb-1">Region</h3>
+              <p className="text-blue-600 font-bold">{project.region}</p>
+            </div>
+            <div className="bg-muted/20 rounded p-2">
+              <h3 className="font-medium text-foreground text-xs mb-1">Type</h3>
+              <p className="text-purple-600 font-bold">{project.type}</p>
+            </div>
+            <div className="bg-muted/20 rounded p-2">
+              <h3 className="font-medium text-foreground text-xs mb-1">Status</h3>
+              <p className="text-orange-600 font-bold">{project.status}</p>
+            </div>
+          </div>
 
-            {/* Financial Info */}
-            <div className="space-y-2 grid grid-cols-2">
-              <div className="bg-green-50 dark:bg-green-900/20 rounded p-3">
-                <h3 className="font-medium text-foreground text-xs mb-1">Stage II WO Amount</h3>
-                <p className="text-lg font-bold text-green-600">₹{parseInt(project.stage_ii_wo)}</p>
+          {/* Financial Info */}
+          <div className="space-y-2 grid grid-cols-2">
+            <div className="bg-green-50 dark:bg-green-900/20 rounded p-3">
+              <h3 className="font-medium text-foreground text-xs mb-1">Stage II WO Amount</h3>
+              <p className="text-lg font-bold text-green-600">₹{parseInt(project.stage_ii_wo)}</p>
+            </div>
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-3">
+              <h3 className="font-medium text-foreground text-xs mb-1">Bill Released</h3>
+              <p className="text-lg font-bold text-blue-600">₹{parseInt(project.bill_released)}</p>
+              <p className="text-xs text-muted-foreground">{percentage}% of WO Amount</p>
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="space-y-2">
+            <div className="grid grid-cols-2">
+
+              <div className="bg-muted/20 rounded p-2">
+                <h3 className="font-medium text-foreground text-xs mb-1">Start Date</h3>
+                <p className="text-foreground">{new Date(project.start_date).toLocaleDateString()}</p>
               </div>
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-3">
-                <h3 className="font-medium text-foreground text-xs mb-1">Bill Released</h3>
-                <p className="text-lg font-bold text-blue-600">₹{parseInt(project.bill_released)}</p>
-                <p className="text-xs text-muted-foreground">{percentage}% of WO Amount</p>
+              <div className="bg-muted/20 rounded p-2">
+                <h3 className="font-medium text-foreground text-xs mb-1">End Date</h3>
+                <p className="text-foreground">{new Date(project.end_date).toLocaleDateString()}</p>
               </div>
             </div>
-
-            {/* Timeline */}
-            <div className="space-y-2">
-              <div className="grid grid-cols-2">
-
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">Start Date</h3>
-                  <p className="text-foreground">{new Date(project.start_date).toLocaleDateString()}</p>
-                </div>
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">End Date</h3>
-                  <p className="text-foreground">{new Date(project.end_date).toLocaleDateString()}</p>
-                </div>
-              </div>
-              {/* <div className="bg-muted/20 rounded p-2">
+            {/* <div className="bg-muted/20 rounded p-2">
                 <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
                 <div className="flex items-center space-x-2">
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -332,33 +395,33 @@ const page = () => {
                   <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
                 </div>
               </div> */}
-            </div>
+          </div>
 
-            {/* Remark */}
-            <div className="bg-muted/20 rounded p-3">
-              <h3 className="font-medium text-foreground text-xs mb-1">Remark</h3>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                On track, minor delays in material procurement
-              </p>
-            </div>
+          {/* Remark */}
+          <div className="bg-muted/20 rounded p-3">
+            <h3 className="font-medium text-foreground text-xs mb-1">Remark</h3>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              On track, minor delays in material procurement
+            </p>
+          </div>
 
-            {/* Timestamps */}
-            <div className="space-y-1 pt-2 border-t border-border">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Updated:</span>
-                <span>{new Date(project.updated_at).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Created:</span>
-                <span>{new Date(project.created_at).toLocaleString()}</span>
-              </div>
+          {/* Timestamps */}
+          <div className="space-y-1 pt-2 border-t border-border">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Updated:</span>
+              <span>{new Date(project.updated_at).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Created:</span>
+              <span>{new Date(project.created_at).toLocaleString()}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-  </>)
+</>)
 }
 
 export default page
