@@ -398,7 +398,7 @@ export default function ProjectsTable({
     }
     if (selectBarFilters?.year && selectBarFilters.year !== "all") {
       filteredData = filteredData.filter(p => {
-        const projectYear = new Date(p.start_date).getFullYear().toString()
+        const projectYear = new Date(p.end_date).getFullYear().toString()
         return projectYear === selectBarFilters.year;
       })
     }

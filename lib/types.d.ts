@@ -72,6 +72,25 @@ export interface FilterValues {
   month?: string
 }
 
+export interface Todo {
+  id : number,
+  project_id : number,
+  title : string,
+  description? : string,
+  is_done : boolean,
+  priority : 'low' | 'medium' | 'high',
+  due_date? : string,
+  created_at : string,
+  updated_at : string
+}
+
+export interface TodoFormData {
+  title : string,
+  description? : string,
+  priority : 'low' | 'medium' | 'high',
+  due_date? : string,
+  
+}
 
 export interface SelectBarProps {
   filters?: FilterValues

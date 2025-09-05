@@ -1,6 +1,7 @@
 'use client'
 import AmountDistributionManager from '@/app/components/AmountDistributionManager';
 import StickyHeader from '@/app/components/StickyHeader';
+import TodoManager from '@/app/components/TodoManager';
 import VideoPlayer from '@/app/components/VideoPlayer';
 import { Project1 } from '@/lib/types';
 import { useParams } from 'next/navigation'
@@ -246,15 +247,35 @@ const page = () => {
 
     <header>
       <StickyHeader />
-      <div className='flex justify-between items-center'>
-        <h1 className="px-3 py-2 text-2xl font-bold text-foreground text-left">{project.title}</h1>
-        <div className="bg-muted/20 rounded p-3 col-span-2">
+      <div className='flex justify-between items-center p-3'>
+        <div className="flex-1 flex items-center justify-between gap-8">
+          <h1 className="text-2xl font-bold text-foreground mb-2">{project.title}</h1>
+          <div className="flex gap-6 text-md px-2">
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Region</span>
+              <span className="font-semibold text-blue-600">{project.region}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Type</span>
+              <span className="font-semibold text-purple-600">{project.type}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">WO Amount</span>
+              <span className="font-semibold text-green-600">₹{parseInt(project.stage_ii_wo).toLocaleString()}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground text-xs">Bill Released</span>
+              <span className="font-semibold text-blue-600">₹{parseInt(project.bill_released).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+        <div className="bg-muted/20 rounded p-3">
           <label className="flex items-center space-x-2 cursor-pointer">
             <input
               type="checkbox"
               checked={isCompleted}
               onChange={(e) => handleCompletionToggle(e.target.checked)}
-              className="h-4 w-4 rounded border-border"
+              className=" accent-green-400 h-4 w-4 rounded-xl border border-accent-foreground"
             />{isCompleted ? <span className=" my-0 py-1 px-3 rounded-lg font-medium bg-green-500/50 text-foreground text-lg">
               Completed
             </span> : <span className="py-1 my-0 px-3 rounded-lg font-medium bg-yellow-400/50 text-foreground text-lg">
@@ -264,8 +285,8 @@ const page = () => {
           </label>
         </div>
       </div>
-
     </header>
+
     <div className="bg h-screen w-screen bg-background overflow-y-auto flex flex-col">
 
       <div className="flex-1 p-4 grid grid-cols-12 gap-4 h-full">
@@ -339,7 +360,11 @@ const page = () => {
             <div className="grid grid-cols-2 gap-3 relative">
 
               <div className="bg-muted/20 rounded col-span-2 p-2 sticky">
-                <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
+                <h3 className="font-medium text-foreground text-xs mb-1">Deadline Progress</h3>
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                  <span>{new Date(project.start_date).toLocaleDateString()}</span>
+                  <span>{new Date(project.end_date).toLocaleDateString()}</span>
+                </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${calculateDeadlineProgress(project.start_date, project.end_date)}%` }}></div>
@@ -347,66 +372,12 @@ const page = () => {
                   <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
                 </div>
               </div>
-              <div className="col-span-2 grid grid-cols-3">
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">Region</h3>
-                  <p className="text-blue-600 font-bold">{project.region}</p>
-                </div>
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">Type</h3>
-                  <p className="text-purple-600 font-bold">{project.type}</p>
-                </div>
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">Status</h3>
-                  <p className="text-orange-600 font-bold">{project.status}</p>
-                </div>
-              </div>
+             
             </div>
 
             {/* Financial Info */}
-            <div className="space-y-2 grid grid-cols-2">
-              <div className="bg-green-50 dark:bg-green-900/20 rounded p-3">
-                <h3 className="font-medium text-foreground text-xs mb-1">Stage II WO Amount</h3>
-                <p className="text-lg font-bold text-green-600">₹{parseInt(project.stage_ii_wo)}</p>
-              </div>
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded p-3">
-                <h3 className="font-medium text-foreground text-xs mb-1">Bill Released</h3>
-                <p className="text-lg font-bold text-blue-600">₹{parseInt(project.bill_released)}</p>
-                <p className="text-xs text-muted-foreground">{percentage}% of WO Amount</p>
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="space-y-2">
-              <div className="grid grid-cols-2">
-
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">Start Date</h3>
-                  <p className="text-foreground">{new Date(project.start_date).toLocaleDateString()}</p>
-                </div>
-                <div className="bg-muted/20 rounded p-2">
-                  <h3 className="font-medium text-foreground text-xs mb-1">End Date</h3>
-                  <p className="text-foreground">{new Date(project.end_date).toLocaleDateString()}</p>
-                </div>
-              </div>
-              {/* <div className="bg-muted/20 rounded p-2">
-                <h3 className="font-medium text-foreground text-xs mb-1">Deadline</h3>
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${calculateDeadlineProgress(project.start_date, project.end_date)}%` }}></div>
-                  </div>
-                  <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
-                </div>
-              </div> */}
-            </div>
-
-            {/* Remark */}
-            <div className="bg-muted/20 rounded p-3">
-              <h3 className="font-medium text-foreground text-xs mb-1">Remark</h3>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                On track, minor delays in material procurement
-              </p>
-            </div>
+            <TodoManager projectId={id as string}/>
+            
 
             {/* Timestamps */}
             <div className="space-y-1 pt-2 border-t border-border">
