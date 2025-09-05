@@ -293,7 +293,7 @@ const page = () => {
         {/* Charts Section - Takes up 8 columns */}
         <div className="col-span-8 grid grid-rows-1 gap-4">
           {/* Both Charts in Top Row */}
-          <div className="grid grid-cols-1 border border-red-600 gap-4 max-h-fit">
+          <div className="grid grid-cols-1 border-border gap-4 max-h-fit">
             {/* <div className="grid grid-cols-2 gap-4"> */}
             {/* PieChart */}
             <div className="bg-card border border-border rounded-lg p-3 max-h-fit">

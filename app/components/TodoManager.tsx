@@ -1,4 +1,5 @@
 'use client'
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React, { FormEvent, useEffect, useState } from 'react'
 import { Todo, TodoFormData } from '@/lib/types'
 
@@ -84,7 +85,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             if (response.ok) {
                 const data = await response.json();
                 setTodos([data.todo, ...todos]);
-                setFormData({ title: '', description: '', priority: 'medium' , due_date: new Date().toISOString().split('T')[0]});
+                setFormData({ title: '', description: '', priority: 'medium', due_date: new Date().toISOString().split('T')[0] });
                 setShowAddForm(false);
             }
 
@@ -190,7 +191,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                 </div>
                 <button
                     onClick={() => setShowAddForm(!showAddForm)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className={`px-4 py-2 transition-none ${showAddForm ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white rounded-lg `}
                 >
                     {showAddForm ? 'Cancel' : 'Add Todo'}
                 </button>
@@ -224,15 +225,21 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Priority</label>
-                            <select
+                            <Select
                                 value={formData.priority}
-                                onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'low' | 'medium' | 'high' })}
-                                className="w-full px-3 py-2 border border-border rounded-lg"
+                                onValueChange={(value) => setFormData({ ...formData, priority: value as 'low' | 'medium' | 'high' })}
+                            // className="w-full px-3 py-2 border border-border rounded-lg"
                             >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                            </select>
+                                <SelectTrigger className='w-full'>
+                                    <SelectValue placeholder='Priority' />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                    <SelectItem value="low">Low</SelectItem>
+                                    <SelectItem value="medium">Medium</SelectItem>
+                                    <SelectItem value="high">High</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium mb-1">Due Date</label>
@@ -256,7 +263,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                                     setShowAddForm(false);
                                     setFormData({
                                         title: '',
-                                        description : '',
+                                        description: '',
                                         priority: 'medium',
                                         due_date: new Date().toISOString().split('T')[0]
                                     })
@@ -278,7 +285,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                     <div className="text-center py-4 text-muted-foreground">No todos yet. Add your first todo!</div>
                 ) : (
                     todos.map((todo) => (
-                        <div key={todo.id} className={`rounded-lg p-3 ${todo.is_done ? 'bg-blue-100/50 border border-blue-400/50 ' : 'bg-card border border-border'}`}>
+                        <div key={todo.id} className={`rounded-lg p-3 ${todo.is_done ? 'bg-blue-100/15 border border-blue-400/50 ' : 'bg-card border border-border'}`}>
                             {editingTodo?.id === todo.id ? (
                                 // Edit Form
                                 <form onSubmit={handleUpdateTodo} className="space-y-3">
@@ -297,16 +304,22 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                                         placeholder='Todo description'
                                         rows={2}
                                     />
-                                    <div className="flex gap-2">
-                                        <select
+                                    <div className="flex gap-2 w-full">
+                                        <Select
                                             value={editFormData.priority}
-                                            onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value as 'low' | 'medium' | 'high' })}
-                                            className="px-3 py-2 border border-border rounded-lg"
+                                            onValueChange={(value) => setEditFormData({ ...editFormData, priority: value as 'low' | 'medium' | 'high' })}
+                                            // className="px-3 py-2 border border-border rounded-lg"
                                         >
-                                            <option value="low">Low</option>
-                                            <option value="medium">Medium</option>
-                                            <option value="high">High</option>
-                                        </select>
+                                            <SelectTrigger className='w-full px-3 py-2 border border-border bg-background'>
+                                                <SelectValue placeholder='Priority'/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+
+                                                <SelectItem value="low">Low</SelectItem>
+                                                <SelectItem value="medium">Medium</SelectItem>
+                                                <SelectItem value="high">High</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                         <input
                                             type="date"
                                             value={editFormData.due_date}
@@ -347,8 +360,8 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                                             )}
                                             <div className="flex items-center gap-2 mt-1">
                                                 <span className={`text-xs px-2 py-1 rounded ${todo.priority === 'high' ? 'bg-red-100 text-red-700' :
-                                                        todo.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                                            'bg-green-100 text-green-700'
+                                                    todo.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                                        'bg-green-100 text-green-700'
                                                     }`}>
                                                     {todo.priority}
                                                 </span>

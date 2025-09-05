@@ -1,4 +1,5 @@
 'use client'
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
@@ -39,18 +40,18 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
   );
   const categories = ['Material', 'Labour', 'Equipment', 'Overhead', 'Transport', 'Other'];
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{name: string; value: number}> }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number }> }) => {
     if (active && payload && payload.length) {
       const categoryName = payload[0].name;
       const value = payload[0].value;
 
       const distribution = data?.distributions?.find(d => d.category === categoryName);
-      console.log(distribution)
+      // console.log(distribution)
 
       return (
         <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
           <p className="font-semibold text-gray-800 text-md">
-            {distribution?.description || categoryName }
+            {distribution?.description || categoryName}
           </p>
           <p className="text-blue-600 text-sm">
             Amount: ₹{value.toLocaleString()}
@@ -140,7 +141,7 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
         <h2 className="text-xl font-semibold">Amount Distribution</h2>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className={`px-4 py-2 transition-none ${showAddForm ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white rounded-lg `}
         >
           {showAddForm ? 'Cancel' : 'Add Distribution'}
         </button>
@@ -154,17 +155,23 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Category</label>
-                <select
+                <Select
                   required
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg"
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                // className="w-full p-2 border border-border rounded-lg"
                 >
-                  <option value="">Select category</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Select Category' />
+                  </SelectTrigger>
+                  <SelectContent>
+
+                    {/* <SelectItem value="">Select category</SelectItem> */}
+                    {categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Amount (₹)</label>
@@ -222,7 +229,7 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
                 {/* <Tooltip
                   formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
                 /> */}
-                <Tooltip content={<CustomTooltip/>}></Tooltip>
+                <Tooltip content={<CustomTooltip />}></Tooltip>
                 <Legend />
               </PieChart>
             </ResponsiveContainer>

@@ -1,4 +1,5 @@
 'use client'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Project1 } from '@/lib/types';
 import React, { useState, useEffect } from 'react'
 
@@ -6,10 +7,10 @@ interface EditProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProjectUpdated: (project: Project1) => void;
-  project : Project1 | null;
+  project: Project1 | null;
 }
 
-const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditProjectModalProps) => {
+const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditProjectModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -27,23 +28,23 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditPr
     remark: ''
   });
 
-  useEffect(()=>{
-    if(project){
-        setFormData({
-            title : project.title || '',
-            description : project.description || '',
-            region : project.region || 'HQ',
-            type : project.type || 'Capital',
-            status: project.status?.toLowerCase() as 'completed' | 'ongoing' || 'ongoing',
-            progress : project.progress || 0,
-            start_date : project.start_date || '',
-            end_date : project.end_date|| '',
-            image_url : project.image_url ||  '',
-            video_url : project.video_url || '',
-            stage_ii_wo : Number(project.stage_ii_wo) || 0, 
-            bill_released : Number(project.bill_released) || 0, 
-            remark : project.remark || '',
-        })
+  useEffect(() => {
+    if (project) {
+      setFormData({
+        title: project.title || '',
+        description: project.description || '',
+        region: project.region || 'HQ',
+        type: project.type || 'Capital',
+        status: project.status?.toLowerCase() as 'completed' | 'ongoing' || 'ongoing',
+        progress: project.progress || 0,
+        start_date: project.start_date || '',
+        end_date: project.end_date || '',
+        image_url: project.image_url || '',
+        video_url: project.video_url || '',
+        stage_ii_wo: Number(project.stage_ii_wo) || 0,
+        bill_released: Number(project.bill_released) || 0,
+        remark: project.remark || '',
+      })
     }
   }, [project])
 
@@ -56,7 +57,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(!project) return;
+    if (!project) return;
     setIsLoading(true);
 
     try {
@@ -172,18 +173,24 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditPr
               <label className="block text-sm font-medium text-foreground mb-2">
                 Region *
               </label>
-              <select
+              <Select
                 required
                 value={formData.region}
-                onChange={(e) => handleInputChange('region', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('region', value)}
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="HQ">HQ</option>
-                <option value="ER">ER</option>
-                <option value="NR">NR</option>
-                <option value="SR">SR</option>
-                <option value="WR">WR</option>
-              </select>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Region' />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="HQ">HQ</SelectItem>
+                  <SelectItem value="ER">ER</SelectItem>
+                  <SelectItem value="NR">NR</SelectItem>
+                  <SelectItem value="SR">SR</SelectItem>
+                  <SelectItem value="WR">WR</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Type */}
@@ -191,16 +198,23 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditPr
               <label className="block text-sm font-medium text-foreground mb-2">
                 Type *
               </label>
-              <select
+              <Select
                 required
                 value={formData.type}
-                onChange={(e) => handleInputChange('type', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('type', value)}
+                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Capital">Capital</option>
-                <option value="R & M">R & M</option>
-                <option value="Stores & Spares">Stores & Spares</option>
-              </select>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Region' />
+                </SelectTrigger>
+
+                <SelectContent>
+
+                <SelectItem value="Capital">Capital</SelectItem>
+                <SelectItem value="R & M">R & M</SelectItem>
+                <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
 
@@ -210,14 +224,21 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated , project}: EditPr
               <label className="block text-sm font-medium text-foreground mb-2">
                 Status
               </label>
-              <select
+              <Select
                 value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('status', value)}
+                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="ongoing">Ongoing</option>
-                <option value="completed">Completed</option>
-              </select>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Region' />
+                </SelectTrigger>
+
+                <SelectContent>
+
+                <SelectItem value="ongoing">Ongoing</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Progress */}

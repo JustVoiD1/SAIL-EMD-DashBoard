@@ -1,4 +1,5 @@
 'use client'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Project1 } from '@/lib/types';
 import React, { useState } from 'react'
 
@@ -16,20 +17,20 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
     region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
     type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
     status: 'ongoing' as 'completed' | 'ongoing',
-    progress: 0,
+    progress: '',
     start_date: '',
     end_date: '',
     image_url: '',
     video_url: '',
-    stage_ii_wo: 0,
-    bill_released: 0,
+    stage_ii_wo: '',
+    bill_released: '',
     remark: ''
   });
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value === '' ? '' : value
     }));
   };
 
@@ -42,6 +43,9 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
       const currentDate = new Date().toISOString().split('T')[0]
       const projectData = {
         ...formData,
+        progress: formData.progress === '' ? 0 : parseInt(formData.progress),
+        stage_ii_wo: formData.stage_ii_wo === '' ? 0 : parseInt(formData.stage_ii_wo),
+        bill_released: formData.bill_released === '' ? 0 : parseInt(formData.bill_released),
         start_date: formData.start_date || currentDate,
         end_date: formData.end_date || currentDate
       }
@@ -80,13 +84,13 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
       region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
       type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
       status: 'ongoing' as 'completed' | 'ongoing',
-      progress: 0,
+      progress: '',
       start_date: '',
       end_date: '',
       image_url: '',
       video_url: '',
-      stage_ii_wo: 0,
-      bill_released: 0,
+      stage_ii_wo: '',
+      bill_released: '',
       remark: ''
     });
     onClose();
@@ -150,18 +154,24 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               <label className="block text-sm font-medium text-foreground mb-2">
                 Region *
               </label>
-              <select
+              <Select
                 required
                 value={formData.region}
-                onChange={(e) => handleInputChange('region', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('region', value)}
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="HQ">HQ</option>
-                <option value="ER">ER</option>
-                <option value="NR">NR</option>
-                <option value="SR">SR</option>
-                <option value="WR">WR</option>
-              </select>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder="Region" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="HQ">HQ</SelectItem>
+                  <SelectItem value="ER">ER</SelectItem>
+                  <SelectItem value="NR">NR</SelectItem>
+                  <SelectItem value="SR">SR</SelectItem>
+                  <SelectItem value="WR">WR</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Type */}
@@ -169,16 +179,22 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               <label className="block text-sm font-medium text-foreground mb-2">
                 Type *
               </label>
-              <select
+              <Select
                 required
                 value={formData.type}
-                onChange={(e) => handleInputChange('type', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('type', value)}
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Capital">Capital</option>
-                <option value="R & M">R & M</option>
-                <option value="Stores & Spares">Stores & Spares</option>
-              </select>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="Capital">Capital</SelectItem>
+                  <SelectItem value="R & M">R & M</SelectItem>
+                  <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
 
@@ -188,14 +204,21 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
               <label className="block text-sm font-medium text-foreground mb-2">
                 Status
               </label>
-              <select
+              <Select
                 value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onValueChange={(value) => handleInputChange('status', value)}
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="ongoing">Ongoing</option>
-                <option value="completed">Completed</option>
-              </select>
+                <SelectTrigger className='w-full bg-background'>
+                  <SelectValue placeholder="status" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="ongoing">Ongoing</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+
+              </Select>
             </div>
 
             {/* Progress */}
@@ -208,7 +231,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 min="0"
                 max="100"
                 value={formData.progress}
-                onChange={(e) => handleInputChange('progress', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleInputChange('progress', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
@@ -226,7 +249,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 type="number"
                 min="0"
                 value={formData.stage_ii_wo}
-                onChange={(e) => handleInputChange('stage_ii_wo', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleInputChange('stage_ii_wo', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
@@ -241,7 +264,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
                 type="number"
                 min="0"
                 value={formData.bill_released}
-                onChange={(e) => handleInputChange('bill_released', parseInt(e.target.value) || 0)}
+                onChange={(e) => handleInputChange('bill_released', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0"
               />
