@@ -9,8 +9,8 @@ export interface Project1 {
   progress: number
   start_date: string
   end_date: string
-  stage_ii_wo: string 
-  bill_released: string
+  stage_ii_wo: number 
+  bill_released: number
   image_url: string | null
   video_url: string | null
   remark: string | null

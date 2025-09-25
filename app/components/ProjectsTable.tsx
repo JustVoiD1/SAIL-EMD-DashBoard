@@ -329,9 +329,10 @@ export default function ProjectsTable({
 
 
   const handleEditProject = useCallback((project: Project1) => {
+    console.log('HandleEditProject: ', project)
     setEditingProject(project)
     setEditModalOpen(true)
-  }, [])
+  }, [editingProject])
 
   const handleCloseEditModal = useCallback(() => {
     setEditModalOpen(false)
@@ -622,6 +623,7 @@ export default function ProjectsTable({
       </div>
     </div>
     <EditProjectModal
+    key={editingProject?.id || 'new-edit-modal'}
       isOpen={editModalOpen}
       onClose={handleCloseEditModal}
       onProjectUpdated={handleProjectUpdated}

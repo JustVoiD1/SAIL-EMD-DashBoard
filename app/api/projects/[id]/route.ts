@@ -30,8 +30,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         await pgClient.connect();
 
         const { title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark } = await req.json();
+        console.log('Received data:', { title, description, region, type, status, progress, start_date, end_date, image_url, video_url, stage_ii_wo, bill_released, remark });
 
-        if (!title || !description == null || !region || !type) {
+        if (!title || !description || !region || !type) {
             return NextResponse.json(
                 { success: false, error: 'Title, description, region, and type are required' },
                 { status: 400 }

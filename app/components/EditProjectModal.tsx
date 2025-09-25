@@ -7,17 +7,37 @@ interface EditProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProjectUpdated: (project: Project1) => void;
-  project: Project1 | null;
+  project?: Project1 | null;
+}
+interface FormProps {
+  title: string,
+  description: string | null,
+  // region: string,
+  // type: string,
+  // status: string,
+  region: "HQ" | "ER" | "NR" | "SR" | "WR",
+  type: "Capital" | "R & M" | "Stores & Spares",
+  status: "completed" | "ongoing",
+  progress: number,
+  start_date: string,
+  end_date: string,
+  stage_ii_wo: number,
+  bill_released: number,
+  image_url: string | null,
+  video_url: string | null,
+  remark: string | null,
 }
 
 const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditProjectModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  console.log('Project inside edit mode: ', project)
+
+  const [formData, setFormData] = useState<FormProps>({
     title: '',
-    description: '', // changed from oneliner
-    region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
-    type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
-    status: 'ongoing' as 'completed' | 'ongoing',
+    description: '',
+    region: project?.region || 'HQ' as "HQ" | "ER" | "NR" | "SR" | "WR",
+    type: project?.type || "Capital" as "Capital" | "R & M" | "Stores & Spares",
+    status: project?.status || 'ongoing',
     progress: 0,
     start_date: '',
     end_date: '',
@@ -26,27 +46,48 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
     stage_ii_wo: 0,
     bill_released: 0,
     remark: ''
+    // title: '',
+    // description: '',
+    // region: project?.region || 'HQ' as "HQ" | "ER" | "NR" | "SR" | "WR",
+    // type: project?.type || "Capital" as "Capital" | "R & M" | "Stores & Spares",
+    // status: 'ongoing',
+    // progress: 0,
+    // start_date: '',
+    // end_date: '',
+    // image_url: '',
+    // video_url: '',
+    // stage_ii_wo: 0,
+    // bill_released: 0,
+    // remark: ''
   });
 
   useEffect(() => {
-    if (project) {
+    if (project !== null && project !== undefined && isOpen) {
       setFormData({
         title: project.title || '',
         description: project.description || '',
-        region: project.region || 'HQ',
-        type: project.type || 'Capital',
-        status: project.status?.toLowerCase() as 'completed' | 'ongoing' || 'ongoing',
+        region: project?.region as "HQ" | "ER" | "NR" | "SR" | "WR" || 'HQ',
+        type: project?.type as "Capital" | "R & M" | "Stores & Spares" || 'Capital',
+        status: project?.status as "completed" | "ongoing" || 'ongoing',
         progress: project.progress || 0,
-        start_date: project.start_date || '',
-        end_date: project.end_date || '',
+        start_date: project.start_date ? project.start_date.split('T')[0] : '',
+        end_date: project.end_date ? project.end_date.split('T')[0] : '',
         image_url: project.image_url || '',
         video_url: project.video_url || '',
         stage_ii_wo: Number(project.stage_ii_wo) || 0,
         bill_released: Number(project.bill_released) || 0,
         remark: project.remark || '',
-      })
+      });
+      console.log('Project inside EditProjectModal', project)
+
+      console.log('Formdata set to', formData)
     }
-  }, [project])
+  }, [isOpen, project])
+
+  useEffect(() => {
+
+    console.log('Project is : ', project, ' and FormData state updated:', formData);
+  }, []);
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
@@ -58,6 +99,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!project) return;
+    console.log('Form data on submit:', formData);
     setIsLoading(true);
 
     try {
@@ -100,9 +142,9 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
     setFormData({
       title: '',
       description: '',
-      region: 'HQ' as 'HQ' | 'ER' | 'NR' | 'SR' | 'WR',
-      type: 'Capital' as 'Capital' | 'R & M' | 'Stores & Spares',
-      status: 'ongoing' as 'completed' | 'ongoing',
+      region: 'HQ',
+      type: 'Capital',
+      status: 'ongoing',
       progress: 0,
       start_date: '',
       end_date: '',
@@ -161,7 +203,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
             <textarea
               required
               rows={3}
-              value={formData.description}
+              value={formData.description!}
               onChange={(e) => handleInputChange('description', e.target.value)}
               className="max-h-[7vh] w-full px-3 py-1 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter project description"
@@ -202,17 +244,17 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
                 required
                 value={formData.type}
                 onValueChange={(value) => handleInputChange('type', value)}
-                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Region' />
+                  <SelectValue placeholder='Type' />
                 </SelectTrigger>
 
                 <SelectContent>
 
-                <SelectItem value="Capital">Capital</SelectItem>
-                <SelectItem value="R & M">R & M</SelectItem>
-                <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
+                  <SelectItem value="Capital">Capital</SelectItem>
+                  <SelectItem value="R & M">R & M</SelectItem>
+                  <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -227,16 +269,16 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
               <Select
                 value={formData.status}
                 onValueChange={(value) => handleInputChange('status', value)}
-                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Region' />
+                  <SelectValue placeholder='Status' />
                 </SelectTrigger>
 
                 <SelectContent>
 
-                <SelectItem value="ongoing">Ongoing</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="ongoing">Ongoing</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -299,7 +341,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
                 <input
                   type="date"
                   value={formData.start_date}
-                  onChange={(e) => handleInputChange('start_date', e.target.value)}
+                  onChange={(e) => handleInputChange('start_date', (e.target.value))}
                   className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -325,7 +367,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
               </label>
               <input
                 type="url"
-                value={formData.image_url}
+                value={formData.image_url?.toString()}
                 onChange={(e) => handleInputChange('image_url', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/image.jpg"
@@ -337,7 +379,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
               </label>
               <input
                 type="url"
-                value={formData.video_url}
+                value={formData.video_url?.toString()}
                 onChange={(e) => handleInputChange('video_url', e.target.value)}
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="https://example.com/video.mp4"
@@ -352,7 +394,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
             </label>
             <textarea
               rows={2}
-              value={formData.remark}
+              value={formData.remark?.toString()}
               onChange={(e) => handleInputChange('remark', e.target.value)}
               className="max-h-[5vh] overflow-y-clip w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter any remarks"

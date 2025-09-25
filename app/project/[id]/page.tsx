@@ -141,7 +141,7 @@ const page = () => {
 
   let percentage;
   if (!project) percentage = 0;
-  else percentage = (parseInt(project.bill_released) * 100 / parseInt(project.stage_ii_wo)).toFixed(1);
+  else percentage = ((project.bill_released) * 100 / (project.stage_ii_wo)).toFixed(1);
 
   const handleCompletionToggle = async (checked: boolean) => {
     try {
@@ -261,11 +261,11 @@ const page = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">WO Amount</span>
-              <span className="font-semibold text-green-600">₹{parseInt(project.stage_ii_wo).toLocaleString()}</span>
+              <span className="font-semibold text-green-600">₹{(project.stage_ii_wo).toLocaleString()}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Bill Released</span>
-              <span className="font-semibold text-blue-600">₹{parseInt(project.bill_released).toLocaleString()}</span>
+              <span className="font-semibold text-blue-600">₹{(project.bill_released).toLocaleString()}</span>
             </div>
           </div>
         </div>
