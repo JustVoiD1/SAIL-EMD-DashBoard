@@ -254,7 +254,7 @@ export default function Dashboard() {
                 placeholder="Search projects..."
                 value={projectSearched}
                 onChange={(event) => setProjectSearched(event.target.value)}
-                className="max-w-sm border-2 border-accent"
+                className="max-w-sm bg-background border-2 border-accent"
               />
               <div className='flex items-center py-4'>
                 <DropdownMenu>
@@ -290,7 +290,7 @@ export default function Dashboard() {
       </header>
 
       {/* Dashboard Content */}
-      <main className="container mx-auto p-6">
+      <main className=" mx-auto p-6">
         <ProjectsTable
           projects={results}
           searchValue={projectSearched}

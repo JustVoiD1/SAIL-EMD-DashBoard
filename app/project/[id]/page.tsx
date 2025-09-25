@@ -247,7 +247,7 @@ const page = () => {
 
     <header>
       <StickyHeader />
-      <div className='flex justify-between items-center p-3'>
+      <div className='flex justify-between flex-wrap items-center p-3'>
         <div className="flex-1 flex items-center justify-between gap-8">
           <h1 className="text-2xl font-bold text-foreground mb-2">{project.title}</h1>
           <div className="flex gap-6 text-md px-2">
