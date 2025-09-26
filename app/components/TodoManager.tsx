@@ -2,6 +2,8 @@
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React, { FormEvent, useEffect, useState } from 'react'
 import { Todo, TodoFormData } from '@/lib/types'
+import { Button } from '@/components/ui/button';
+import MyLoader from './MyLoader';
 
 interface TodoManagerProps {
     projectId: string
@@ -70,7 +72,29 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
         e.preventDefault();
         if (!formData.title.trim()) return;
 
+        const currTodoId = Math.floor(Math.random() * 10000)
         try {
+            const currTodo: Todo = {
+                id: currTodoId,
+                title: formData.title,
+                description: formData.description,
+                priority: formData.priority,
+                due_date: formData.due_date,
+                is_done: false,
+                project_id: parseInt(projectId),
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            }
+
+            setTodos(todos => [currTodo, ...todos])
+            const resetFormData = {
+                title: '',
+                description: '',
+                priority: 'medium' as 'low' | 'medium' | 'high',
+                due_date: new Date().toISOString().split('T')[0]
+            };
+            setFormData(resetFormData);
+            setShowAddForm(false);
 
             const token = localStorage.getItem('token');
             const response = await fetch(`/api/projects/${projectId}/todos`, {
@@ -84,15 +108,24 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setTodos([data.todo, ...todos]);
-                setFormData({ title: '', description: '', priority: 'medium', due_date: new Date().toISOString().split('T')[0] });
-                setShowAddForm(false);
+                setTodos(prevTodos =>
+                    prevTodos.map(t => t.id === currTodo.id ? data.todo : t)
+                );
+            }
+            else {
+                setTodos(prevTodos => prevTodos.filter(t => t.id !== currTodoId));
+
             }
 
 
 
         } catch (err) {
             console.error('Error adding todo: ', err);
+            setTodos(prevTodos => prevTodos.filter(t => t.id !== currTodoId));
+            setFormData(formData); // Restore form data
+            setShowAddForm(true); // Show form again
+            alert('Failed to add todo. Please try again.');
+
         }
     }
 
@@ -100,6 +133,8 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
         try {
             const token = localStorage.getItem('token');
             const todo = todos.find(t => t.id === todoId);
+            setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: !currentStatus } : t));
+
 
             const response = await fetch(`/api/projects/${projectId}/todos/${todoId}`, {
                 method: 'PUT',
@@ -113,11 +148,15 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                 })
             });
 
-            if (response.ok) {
-                setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: !currentStatus } : t));
+            if (!response.ok) {
+                setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: currentStatus } : t));
+                console.error('Failed to update todo');
+                alert('Failed to update todo. Please try again.');
             }
         } catch (err) {
-            console.error('Error updating todo: ', err);
+            setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: currentStatus } : t));
+            console.error('Error Updating todo: ', err);
+            alert('Failed to update todo. Please try again.');
         }
     }
 
@@ -125,7 +164,23 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
         e.preventDefault();
         if (!editingTodo || !editFormData.title.trim()) return;
 
+        const originalTodo = editingTodo
+
+        const updatedTodo = {
+            ...editingTodo,
+            title: editFormData.title,
+            description: editFormData.description || '',
+            priority: editFormData.priority,
+            due_date: editFormData.due_date || '',
+            updated_at: new Date().toISOString()
+        };
         try {
+
+            setTodos(prevTodos =>
+                prevTodos.map(t => t.id === editingTodo.id ? updatedTodo : t)
+            );
+
+            cancelEdit()
             const token = localStorage.getItem('token')
             const response = await fetch(`/api/projects/${projectId}/todos/${editingTodo.id}`, {
                 method: 'PUT',
@@ -141,16 +196,45 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             if (response.ok) {
                 const data = await response.json();
                 setTodos(todos.map(t => t.id === editingTodo.id ? data.todo : t));
-                cancelEdit();
+            }
+            else {
+                console.error('Todo update failed')
+                setTodos(prevTodos =>
+                    prevTodos.map(t => t.id === editingTodo.id ? originalTodo : t)
+                );
+                setEditingTodo(originalTodo);
+                setEditFormData({
+                    title: originalTodo.title,
+                    description: originalTodo.description || '',
+                    priority: originalTodo.priority,
+                    due_date: originalTodo.due_date || ''
+                });
             }
 
         } catch (err) {
             console.error('Error updating todo: ', err);
+            setTodos(prevTodos =>
+                prevTodos.map(t => t.id === editingTodo.id ? originalTodo : t)
+            );
+            setEditingTodo(originalTodo);
+            setEditFormData({
+                title: originalTodo.title,
+                description: originalTodo.description || '',
+                priority: originalTodo.priority,
+                due_date: originalTodo.due_date || ''
+            });
+            alert('Failed to update todo. Please try again.');
+
         }
     }
 
     const deleteTodo = async (todoId: number) => {
+        const wish = window.confirm('Are you sure you want to delete the todo? this action cannot be undone.')
+        if(!wish) return;
+        const todoToDelete = todos.find(t => t.id === todoId)
+        if(!todoToDelete) return;
         try {
+            setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId))
             const token = localStorage.getItem('token');
             const response = await fetch(`/api/projects/${projectId}/todos/${todoId}`, {
                 method: "DELETE",
@@ -159,11 +243,18 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                     'Content-type': 'application/json'
                 }
             })
-            if (response.ok) {
-                setTodos(todos.filter(t => t.id !== todoId));
+            if (!response.ok) {
+                // setTodos(todos.filter(t => t.id !== todoId));
+                setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
+                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            ));
             }
         } catch (err) {
             console.error('Error deleting todo: ', err);
+            setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
+                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            ));
+            alert('Failed to delete todo')
         }
 
     }
@@ -230,7 +321,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                                 onValueChange={(value) => setFormData({ ...formData, priority: value as 'low' | 'medium' | 'high' })}
                             // className="w-full px-3 py-2 border border-border rounded-lg"
                             >
-                                <SelectTrigger className='w-full'>
+                                <SelectTrigger className='w-full bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50'>
                                     <SelectValue placeholder='Priority' />
                                 </SelectTrigger>
 
@@ -257,6 +348,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                             >
                                 Add Todo
                             </button>
+
                             <button
                                 type="button"
                                 onClick={() => {
@@ -280,7 +372,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             {/* Todo List */}
             <div className="space-y-2">
                 {isLoading ? (
-                    <div className="text-center py-4">Loading todos...</div>
+                    <MyLoader content='Loading Todos...' />
                 ) : todos.length === 0 ? (
                     <div className="text-center py-4 text-muted-foreground">No todos yet. Add your first todo!</div>
                 ) : (
@@ -308,10 +400,10 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                                         <Select
                                             value={editFormData.priority}
                                             onValueChange={(value) => setEditFormData({ ...editFormData, priority: value as 'low' | 'medium' | 'high' })}
-                                            // className="px-3 py-2 border border-border rounded-lg"
+                                        // className="px-3 py-2 border border-border rounded-lg"
                                         >
                                             <SelectTrigger className='w-full px-3 py-2 border border-border bg-background'>
-                                                <SelectValue placeholder='Priority'/>
+                                                <SelectValue placeholder='Priority' />
                                             </SelectTrigger>
                                             <SelectContent>
 

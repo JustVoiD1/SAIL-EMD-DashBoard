@@ -1,12 +1,15 @@
 'use client'
 import AmountDistributionManager from '@/app/components/AmountDistributionManager';
+import MyLoader from '@/app/components/MyLoader';
 import StickyHeader from '@/app/components/StickyHeader';
 import TodoManager from '@/app/components/TodoManager';
 import VideoPlayer from '@/app/components/VideoPlayer';
+import { Button } from '@/components/ui/button';
 import { Project1 } from '@/lib/types';
+import Link from 'next/link';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { Cell, Pie, PieChart, LineChart, BarChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
+// import { Cell, Pie, PieChart, LineChart, BarChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Bar } from 'recharts';
 
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
   const currentDate = new Date(); // Current date
@@ -60,78 +63,79 @@ type PieLabelProps = PieSectorData &
   };
 
 
-const BarData = [
-  {
-    name: 'Jan',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Feb',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'March',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'April',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  // {
-  //     name: 'May',
-  //     uv: 1890,
-  //     pv: 4800,
-  //     amt: 2181,
-  // },
-  // {
-  //     name: 'June',
-  //     uv: 2390,
-  //     pv: 3800,
-  //     amt: 2500,
-  // },
-  // {
-  //     name: 'July',
-  //     uv: 3490,
-  //     pv: 4300,
-  //     amt: 2100,
-  // },
-];
+// const BarData = [
+//   {
+//     name: 'Jan',
+//     uv: 4000,
+//     pv: 2400,
+//     amt: 2400,
+//   },
+//   {
+//     name: 'Feb',
+//     uv: 3000,
+//     pv: 1398,
+//     amt: 2210,
+//   },
+//   {
+//     name: 'March',
+//     uv: 2000,
+//     pv: 9800,
+//     amt: 2290,
+//   },
+//   {
+//     name: 'April',
+//     uv: 2780,
+//     pv: 3908,
+//     amt: 2000,
+//   },
+//   // {
+//   //     name: 'May',
+//   //     uv: 1890,
+//   //     pv: 4800,
+//   //     amt: 2181,
+//   // },
+//   // {
+//   //     name: 'June',
+//   //     uv: 2390,
+//   //     pv: 3800,
+//   //     amt: 2500,
+//   // },
+//   // {
+//   //     name: 'July',
+//   //     uv: 3490,
+//   //     pv: 4300,
+//   //     amt: 2100,
+//   // },
+// ];
 
 
-const PieData = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-];
+// const PieData = [
+//   { name: 'Group A', value: 400 },
+//   { name: 'Group B', value: 300 },
+//   { name: 'Group C', value: 300 },
+//   { name: 'Group D', value: 200 },
+// ];
 
 
-const RADIAN = Math.PI / 180;
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+// const RADIAN = Math.PI / 180;
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+// const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelProps) => {
+//   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+//   const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+//   const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
-  return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-      {`${((percent ?? 1) * 100).toFixed(0)}%`}
-    </text>
-  );
-};
+//   return (
+//     <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+//       {`${((percent ?? 1) * 100).toFixed(0)}%`}
+//     </text>
+//   );
+// };
 
 
 
-const page = () => {
+
+const Page = () => {
   const { id } = useParams();
   const [project, setProject] = useState<Project1 | null>(null)
   const [loading, setLoading] = useState(true)
@@ -238,19 +242,30 @@ const page = () => {
 
   }, [id])
 
-  if (loading) return <div className=''>Loading...</div>
+  if (loading) return <MyLoader />
   if (error) return <div>Error : {error}</div>
   if (!project) return <div className='text-center'>Project Not Found</div>
 
 
-  return (<>
+  return (<div className='min-h-screen'>
 
-    <header>
+    <header className='sticky top-0 z-50'>
+
       <StickyHeader />
-      <div className='flex justify-between flex-wrap items-center p-3'>
+      <div className='flex justify-between flex-wrap items-center p-3 bg-background/90 backdrop-blur-md'>
         <div className="flex-1 flex items-center justify-between gap-8">
           <h1 className="text-2xl font-bold text-foreground mb-2">{project.title}</h1>
           <div className="flex gap-6 text-md px-2">
+            <div className="flex flex-col">
+              <Button variant={'outline'}>
+                <Link href={project?.image_url ||  '#'} target='_blank'>Images</Link>
+              </Button>
+            </div>
+            <div className="flex flex-col">
+              <Button variant={'outline'}>
+                <Link href={project?.video_url ||  '#'} target='_blank'>Videos</Link>
+              </Button>
+            </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground text-xs">Region</span>
               <span className="font-semibold text-blue-600">{project.region}</span>
@@ -289,7 +304,7 @@ const page = () => {
 
     <div className="bg h-screen w-screen bg-background overflow-y-auto flex flex-col">
 
-      <div className="flex-1 p-4 grid grid-cols-12 gap-4 h-full">
+      <div className="relative flex-1 p-4 grid grid-cols-12 gap-4 h-full">
         {/* Charts Section - Takes up 8 columns */}
         <div className="col-span-8 grid grid-rows-1 gap-4">
           {/* Both Charts in Top Row */}
@@ -352,10 +367,9 @@ const page = () => {
         </div>
 
         {/* Project Details Section - Takes up 4 columns */}
-        <div className="col-span-4 bg-card border border-border rounded-lg p-4 overflow-y-auto max-h-fit">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Project Details</h2>
+        <div className="sticky top-0 col-span-4 min-h-full bg-card border border-border rounded-lg p-4 max-h-fit">
 
-          <div className="space-y-4 text-sm">
+          <div className="sticky top-0 space-y-4 text-sm">
             {/* Basic Info */}
             <div className="grid grid-cols-2 gap-3 relative">
 
@@ -372,12 +386,12 @@ const page = () => {
                   <span className="text-sm font-medium">{calculateDeadlineProgress(project.start_date, project.end_date)}%</span>
                 </div>
               </div>
-             
+
             </div>
 
             {/* Financial Info */}
-            <TodoManager projectId={id as string}/>
-            
+            <TodoManager projectId={id as string} />
+
 
             {/* Timestamps */}
             <div className="space-y-1 pt-2 border-t border-border">
@@ -396,7 +410,7 @@ const page = () => {
       </div>
     </div>
 
-  </>)
+  </div>)
 }
 
-export default page
+export default Page

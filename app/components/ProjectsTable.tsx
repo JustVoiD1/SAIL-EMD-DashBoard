@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/table"
 import { FilterValues, Project1, ProjectFormData } from "@/lib/types"
 import EditProjectModal from "./EditProjectModal"
+import MyLoader from "./MyLoader"
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -305,6 +306,7 @@ interface ProjectsTableProps {
   columnVisibility?: VisibilityState
   onColumnVisibilityChange?: (visibility: VisibilityState) => void
   onTableInstanceReady?: (table: any) => void
+  projectsLoading: boolean
 }
 
 export default function ProjectsTable({
@@ -313,7 +315,8 @@ export default function ProjectsTable({
   selectBarFilters = {},
   columnVisibility: externalColumnVisibility,
   onColumnVisibilityChange,
-  onTableInstanceReady
+  onTableInstanceReady,
+  projectsLoading
 }: ProjectsTableProps) {
 
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -329,7 +332,7 @@ export default function ProjectsTable({
 
 
   const handleEditProject = useCallback((project: Project1) => {
-    console.log('HandleEditProject: ', project)
+    // console.log('HandleEditProject: ', project)
     setEditingProject(project)
     setEditModalOpen(true)
   }, [editingProject])
@@ -590,7 +593,7 @@ export default function ProjectsTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {projectsLoading ? <MyLoader content="Fetching Projects..."/> : 'No Results'}
                 </TableCell>
               </TableRow>
             )}

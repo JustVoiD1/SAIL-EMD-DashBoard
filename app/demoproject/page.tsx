@@ -1,10 +1,10 @@
 import React from 'react'
 import TodoManager from '../components/TodoManager'
 
-const page = () => {
+const Page = () => {
   return (
     <div>Nothing in here</div>
   )
 }
 
-export default page
+export default Page

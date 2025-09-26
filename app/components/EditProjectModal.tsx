@@ -30,7 +30,7 @@ interface FormProps {
 
 const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditProjectModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  console.log('Project inside edit mode: ', project)
+  // console.log('Project inside edit mode: ', project)
 
   const [formData, setFormData] = useState<FormProps>({
     title: '',
@@ -78,15 +78,15 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
         bill_released: Number(project.bill_released) || 0,
         remark: project.remark || '',
       });
-      console.log('Project inside EditProjectModal', project)
+      // console.log('Project inside EditProjectModal', project)
 
-      console.log('Formdata set to', formData)
+      // console.log('Formdata set to', formData)
     }
   }, [isOpen, project])
 
   useEffect(() => {
 
-    console.log('Project is : ', project, ' and FormData state updated:', formData);
+    // console.log('Project is : ', project, ' and FormData state updated:', formData);
   }, []);
 
   const handleInputChange = (field: string, value: string | number) => {
@@ -99,7 +99,7 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!project) return;
-    console.log('Form data on submit:', formData);
+    // console.log('Form data on submit:', formData);
     setIsLoading(true);
 
     try {

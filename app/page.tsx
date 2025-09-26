@@ -1,6 +1,7 @@
 'use client'
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import MyLoader from "./components/MyLoader";
 
 export default function Home() {
   const router = useRouter();
@@ -19,11 +20,6 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="h-screen w-screen flex items-center justify-cente fixed inset-0 bg-background/50 backdrop-blur-sm justify-center p-4 z-50r">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-        <p className="mt-4 text-secondary">Redirecting...</p>
-      </div>
-    </div>
+    <MyLoader content="Redirecting..."/>
   );
 }

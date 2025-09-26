@@ -7,6 +7,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { FilterValues, SelectBarProps } from "@/lib/types"
+import { Button } from "@/components/ui/button"
 
 const Selectbar = ({
     filters = {},
@@ -22,8 +23,11 @@ const Selectbar = ({
     return (<>
         <div className='filter-nav flex flex-wrap gap-2 justify-center items-center bg-transparent text-foreground'>
             <Select value={filters.region} onValueChange={(value) => handleFilterChange('region', value)}>
-                <SelectTrigger className="w-[180px] bg-background border-2 border-accent">
+
+                <SelectTrigger className="w-[180px] bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
+
                     <SelectValue placeholder="Region" />
+
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Regions</SelectItem>
@@ -35,7 +39,7 @@ const Selectbar = ({
                 </SelectContent>
             </Select>
             <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
-                <SelectTrigger className="w-[180px] bg-background border-2 border-accent">
+                <SelectTrigger className="w-[180px] bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
                     <SelectValue placeholder="Type of Project" />
                 </SelectTrigger>
                 <SelectContent>
@@ -47,7 +51,7 @@ const Selectbar = ({
                 </SelectContent>
             </Select>
             <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                <SelectTrigger className="w-[180px] bg-background border-2 border-accent">
+                <SelectTrigger className="w-[180px] bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
                     <SelectValue placeholder="Project Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -58,7 +62,7 @@ const Selectbar = ({
                 </SelectContent>
             </Select>
             <Select value={filters.year} onValueChange={(value) => handleFilterChange('year', value)}>
-                <SelectTrigger className="w-[180px] bg-background border-2 border-accent">
+                <SelectTrigger className="w-[180px] bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
                     <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
@@ -75,7 +79,7 @@ const Selectbar = ({
                 </SelectContent>
             </Select>
             <Select value={filters.month} onValueChange={(value) => handleFilterChange('month', value)}>
-                <SelectTrigger className="w-[180px] bg-background border-2 border-accent">
+                <SelectTrigger className="w-[180px] bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50">
                     <SelectValue placeholder="Month" />
                 </SelectTrigger>
                 <SelectContent>

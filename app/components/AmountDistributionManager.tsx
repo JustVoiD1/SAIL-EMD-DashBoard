@@ -161,7 +161,7 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
                   onValueChange={(value) => setFormData({ ...formData, category: value })}
                 // className="w-full p-2 border border-border rounded-lg"
                 >
-                  <SelectTrigger className='w-full'>
+                  <SelectTrigger className='w-full bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50'>
                     <SelectValue placeholder='Select Category' />
                   </SelectTrigger>
                   <SelectContent>
