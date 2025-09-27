@@ -2,6 +2,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Project1 } from '@/lib/types';
 import React, { useState, useEffect } from 'react'
+import { toast } from 'sonner';
 
 interface EditProjectModalProps {
   isOpen: boolean;
@@ -125,14 +126,14 @@ const EditProjectModal = ({ isOpen, onClose, onProjectUpdated, project }: EditPr
         if (result.success) {
           onProjectUpdated(result.project);
           handleClose();
-          alert('Project updated successfully!');
+          toast.success('Project updated successfully!');
         }
       } else {
         throw new Error('Failed to update project');
       }
     } catch (error) {
       console.error('Error updating project:', error);
-      alert('Failed to update project');
+      toast.error('Failed to update project');
     } finally {
       setIsLoading(false);
     }

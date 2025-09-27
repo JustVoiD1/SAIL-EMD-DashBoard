@@ -36,6 +36,9 @@ import {
 import { FilterValues, Project1, ProjectFormData } from "@/lib/types"
 import EditProjectModal from "./EditProjectModal"
 import MyLoader from "./MyLoader"
+import { toast } from "sonner"
+
+
 
 // Helper function to calculate deadline progress based on dates
 const calculateDeadlineProgress = (startDate: string, completionDate: string): number => {
@@ -365,8 +368,8 @@ export default function ProjectsTable({
       if(response.ok){
         const result = await response.json();
         if(result.success){
-          alert('Project Deleted Successfully');
           window.location.reload();
+          toast.info('Project Deleted Successfully');
         }
         else{
           throw new Error('Failed to delete Project');
@@ -375,7 +378,7 @@ export default function ProjectsTable({
       
     } catch (err) {
       console.error(err);
-      alert('Failed to delete Projeect');
+      toast.error('Failed to delete Projeect');
     }
 
   }, [])

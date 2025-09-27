@@ -2,6 +2,7 @@
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { toast } from 'sonner';
 
 
 interface Distribution {
@@ -116,16 +117,16 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
         setFormData({ category: '', amount: '', description: '' });
         setShowAddForm(false);
         fetchDistributions();
-        alert('Distribution added successfully.');
+        toast.success('Distribution added successfully.');
       }
       else {
         const err = await response.json();
-        alert(err.error || 'Failed to add distribution')
+        toast.error(err.error || 'Failed to add distribution')
       }
     }
     catch (err) {
       console.error('Error adding distribution: ', err);
-      alert('Failed to add distribution');
+      toast.error('Failed to add distribution');
     }
   }
 

@@ -4,12 +4,14 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import { Todo, TodoFormData } from '@/lib/types'
 import { Button } from '@/components/ui/button';
 import MyLoader from './MyLoader';
+import { toast } from 'sonner';
 
 interface TodoManagerProps {
-    projectId: string
+    projectId: string,
+    className?: string
 }
 
-const TodoManager = ({ projectId }: TodoManagerProps) => {
+const TodoManager = ({ projectId, className }: TodoManagerProps) => {
     const [todos, setTodos] = useState<Todo[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [showAddForm, setShowAddForm] = useState(false)
@@ -111,9 +113,11 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                 setTodos(prevTodos =>
                     prevTodos.map(t => t.id === currTodo.id ? data.todo : t)
                 );
+                
             }
             else {
                 setTodos(prevTodos => prevTodos.filter(t => t.id !== currTodoId));
+                throw new Error('error adding todo')
 
             }
 
@@ -124,7 +128,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             setTodos(prevTodos => prevTodos.filter(t => t.id !== currTodoId));
             setFormData(formData); // Restore form data
             setShowAddForm(true); // Show form again
-            alert('Failed to add todo. Please try again.');
+            toast.error('Failed to add todo. Please try again.');
 
         }
     }
@@ -151,12 +155,12 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             if (!response.ok) {
                 setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: currentStatus } : t));
                 console.error('Failed to update todo');
-                alert('Failed to update todo. Please try again.');
+                toast.error('Failed to update todo. Please try again.');
             }
         } catch (err) {
             setTodos(todos.map(t => t.id === todoId ? { ...t, is_done: currentStatus } : t));
             console.error('Error Updating todo: ', err);
-            alert('Failed to update todo. Please try again.');
+            toast.error('Failed to update todo. Please try again.');
         }
     }
 
@@ -223,7 +227,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
                 priority: originalTodo.priority,
                 due_date: originalTodo.due_date || ''
             });
-            alert('Failed to update todo. Please try again.');
+            toast.error('Failed to update todo. Please try again.');
 
         }
     }
@@ -245,6 +249,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             })
             if (!response.ok) {
                 // setTodos(todos.filter(t => t.id !== todoId));
+                toast.error('Failed to delete todo')
                 setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             ));
@@ -254,7 +259,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             ));
-            alert('Failed to delete todo')
+            toast.error('Failed to delete todo')
         }
 
     }
@@ -272,11 +277,11 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
     }, [projectId])
 
     return (
-        <div className="space-y-4">
-            <div className="flex justify-between items-center">
+        <div className={className}>
+            <div className="flex justify-between items-center h-full">
                 <div>
                     <h3 className="text-lg font-semibold">Project Todos</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-foreground">
                         {todos.filter(t => t.is_done).length} of {todos.length} done ({calculateProgress()}%)
                     </p>
                 </div>
@@ -370,7 +375,7 @@ const TodoManager = ({ projectId }: TodoManagerProps) => {
             )}
 
             {/* Todo List */}
-            <div className="space-y-2">
+            <div className="space-y-2 overflow-y-auto max-h-[40vh]">
                 {isLoading ? (
                     <MyLoader content='Loading Todos...' />
                 ) : todos.length === 0 ? (

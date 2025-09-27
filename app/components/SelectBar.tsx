@@ -7,7 +7,6 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { FilterValues, SelectBarProps } from "@/lib/types"
-import { Button } from "@/components/ui/button"
 
 const Selectbar = ({
     filters = {},

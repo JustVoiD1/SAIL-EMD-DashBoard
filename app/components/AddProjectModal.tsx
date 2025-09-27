@@ -2,6 +2,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Project1 } from '@/lib/types';
 import React, { useState } from 'react'
+import { toast } from 'sonner';
 
 interface AddProjectModalProps {
   isOpen: boolean;
@@ -64,14 +65,21 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
         if (result.success) {
           onProjectAdded(result.project);
           handleClose();
-          alert('Project created successfully!');
+          toast.success("Project Created Successfully", {
+          description: projectData.title,
+          action: {
+            label: "Undo",
+            onClick: () => console.log("Undo"),
+          },
+        })
         }
       } else {
+        toast.error('Failed to create project')
         throw new Error('Failed to create project');
       }
     } catch (error) {
+      toast.error('Failed to create project')
       console.error('Error creating project:', error);
-      alert('Failed to create project');
     } finally {
       setIsLoading(false);
     }
