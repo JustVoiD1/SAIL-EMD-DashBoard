@@ -155,41 +155,50 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
           <form onSubmit={handleAddDistribution} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
-                <Select
-                  required
-                  value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                // className="w-full p-2 border border-border rounded-lg"
-                >
-                  <SelectTrigger className='w-full bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50'>
-                    <SelectValue placeholder='Select Category' />
-                  </SelectTrigger>
-                  <SelectContent>
+                <label>
 
-                    {/* <SelectItem value="">Select category</SelectItem> */}
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <span className="block text-sm font-medium mb-1">Category</span>
+                  <Select
+                    required
+                    value={formData.category}
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  // className="w-full p-2 border border-border rounded-lg"
+                  >
+                    <SelectTrigger className='w-full bg-background border-2 border-accent shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50'>
+                      <SelectValue placeholder='Select Category' />
+                    </SelectTrigger>
+                    <SelectContent>
+
+                      {/* <SelectItem value="">Select category</SelectItem> */}
+                      {categories.map(cat => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </label>
+
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Amount (₹)</label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="0.01"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full p-2 border border-border rounded-lg"
-                  placeholder="Enter amount"
-                />
+                <label>
+                  <span className="block text-sm font-medium mb-1">Amount (₹)</span>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    className="w-full p-2 border border-border rounded-lg"
+                    placeholder="Enter amount"
+                  />
+                </label>
+
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label>
+
+              <span className="block text-sm font-medium mb-1">Description</span>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -197,6 +206,8 @@ const AmountDistributionManager = ({ projectId }: AmouuntDistributionManagerProp
                 rows={2}
                 placeholder="Optional description"
               />
+              </label>
+
             </div>
             <button
               type="submit"

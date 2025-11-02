@@ -99,10 +99,10 @@ export default function SignUPModal() {
                 <div className="flex justify-end mb-4">
                     <button
                         onClick={toggleDarkMode}
-                        className="p-2 rounded-lg bg-background/20 border border-border hover:bg-background/30 transition-all duration-500 hover:scale-110 hover:rotate-12"
+                        className="p-2 rounded-lg bg-background/20 border border-border hover:bg-background/30 transition-all duration-300 hover:scale-110 hover:rotate-12"
                         aria-label="Toggle dark mode"
                     >
-                        <div className={`transition-all duration-700 ${isDarkMode ? 'rotate-0' : 'rotate-180'}`}>
+                        <div className={`transition-all duration-300 ${isDarkMode ? 'rotate-0' : 'rotate-180'}`}>
                             {isDarkMode ? (
                                 <svg className="h-5 w-5 text-foreground transition-all duration-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />

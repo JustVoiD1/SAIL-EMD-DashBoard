@@ -66,12 +66,12 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
           onProjectAdded(result.project);
           handleClose();
           toast.success("Project Created Successfully", {
-          description: projectData.title,
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
-        })
+            description: projectData.title,
+            action: {
+              label: "Undo",
+              onClick: () => console.log("Undo"),
+            },
+          })
         }
       } else {
         toast.error('Failed to create project')
@@ -129,120 +129,135 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Project Title *
+            <label>
+              <span className="block text-sm font-medium text-foreground mb-2">
+                Project Title *
+              </span>
+              <input
+                type="text"
+                required
+                value={formData.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter project title"
+              />
             </label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter project title"
-            />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
-              Description *
+            <label>
+
+              <span className="block text-sm font-medium text-foreground mb-1">
+                Description *
+              </span>
+              <textarea
+                required
+                rows={3}
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className="max-h-[7vh] w-full px-3 py-1 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                placeholder="Enter project description"
+              />
             </label>
-            <textarea
-              required
-              rows={3}
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="max-h-[7vh] w-full px-3 py-1 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              placeholder="Enter project description"
-            />
           </div>
           {/* Region */}
           <div className='grid grid-cols-4 gap-4'>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Region *
-              </label>
-              <Select
-                required
-                value={formData.region}
-                onValueChange={(value) => handleInputChange('region', value)}
-              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder="Region" />
-                </SelectTrigger>
+              <label>
 
-                <SelectContent>
-                  <SelectItem value="HQ">HQ</SelectItem>
-                  <SelectItem value="ER">ER</SelectItem>
-                  <SelectItem value="NR">NR</SelectItem>
-                  <SelectItem value="SR">SR</SelectItem>
-                  <SelectItem value="WR">WR</SelectItem>
-                </SelectContent>
-              </Select>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Region *
+                </span>
+                <Select
+                  required
+                  value={formData.region}
+                  onValueChange={(value) => handleInputChange('region', value)}
+                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder="Region" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="HQ">HQ</SelectItem>
+                    <SelectItem value="ER">ER</SelectItem>
+                    <SelectItem value="NR">NR</SelectItem>
+                    <SelectItem value="SR">SR</SelectItem>
+                    <SelectItem value="WR">WR</SelectItem>
+                  </SelectContent>
+                </Select>
+              </label>
             </div>
 
             {/* Type */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Type *
-              </label>
-              <Select
-                required
-                value={formData.type}
-                onValueChange={(value) => handleInputChange('type', value)}
-              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Type *
+                </span>
+                <Select
+                  required
+                  value={formData.type}
+                  onValueChange={(value) => handleInputChange('type', value)}
+                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
 
-                <SelectContent>
-                  <SelectItem value="Capital">Capital</SelectItem>
-                  <SelectItem value="R & M">R & M</SelectItem>
-                  <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
-                </SelectContent>
-              </Select>
+                  <SelectContent>
+                    <SelectItem value="Capital">Capital</SelectItem>
+                    <SelectItem value="R & M">R & M</SelectItem>
+                    <SelectItem value="Stores & Spares">Stores & Spares</SelectItem>
+                  </SelectContent>
+                </Select>
+              </label>
+
             </div>
 
 
 
             {/* Status */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Status
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Status
+                </span>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange('status', value)}
+                // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <SelectTrigger className='w-full bg-background'>
+                    <SelectValue placeholder="status" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="ongoing">Ongoing</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+
+                </Select>
               </label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleInputChange('status', value)}
-              // className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <SelectTrigger className='w-full bg-background'>
-                  <SelectValue placeholder="status" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="ongoing">Ongoing</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-
-              </Select>
             </div>
 
             {/* Progress */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Progress (%)
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Progress (%)
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formData.progress}
+                  onChange={(e) => handleInputChange('progress', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0"
+                />
               </label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={formData.progress}
-                onChange={(e) => handleInputChange('progress', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
-              />
             </div>
           </div>
 
@@ -250,57 +265,65 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
           {/* Stage II Work Order */}
           <div className='grid xs:grid-cols-2 sm:grid-cols-3 gap-4'>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Stage II WO Amount (₹)
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Stage II WO Amount (₹)
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.stage_ii_wo}
+                  onChange={(e) => handleInputChange('stage_ii_wo', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0"
+                />
               </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.stage_ii_wo}
-                onChange={(e) => handleInputChange('stage_ii_wo', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
-              />
             </div>
 
             {/* Bill Released */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Bill Released Amount (₹)
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Bill Released Amount (₹)
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.bill_released}
+                  onChange={(e) => handleInputChange('bill_released', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0"
+                />
               </label>
-              <input
-                type="number"
-                min="0"
-                value={formData.bill_released}
-                onChange={(e) => handleInputChange('bill_released', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
-              />
             </div>
 
             {/* Dates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Start Date
+                <label>
+                  <span className="block text-sm font-medium text-foreground mb-2">
+                    Start Date
+                  </span>
+                  <input
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => handleInputChange('start_date', e.target.value)}
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </label>
-                <input
-                  type="date"
-                  value={formData.start_date}
-                  onChange={(e) => handleInputChange('start_date', e.target.value)}
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  End Date
+                <label>
+                  <span className="block text-sm font-medium text-foreground mb-2">
+                    End Date
+                  </span>
+                  <input
+                    type="date"
+                    value={formData.end_date}
+                    onChange={(e) => handleInputChange('end_date', e.target.value)}
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </label>
-                <input
-                  type="date"
-                  value={formData.end_date}
-                  onChange={(e) => handleInputChange('end_date', e.target.value)}
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
               </div>
             </div>
           </div>
@@ -308,43 +331,49 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
           {/* Media URLs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Image URL
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Image URL
+                </span>
+                <input
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) => handleInputChange('image_url', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/image.jpg"
+                />
               </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => handleInputChange('image_url', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/image.jpg"
-              />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Video URL
+              <label>
+                <span className="block text-sm font-medium text-foreground mb-2">
+                  Video URL
+                </span>
+                <input
+                  type="url"
+                  value={formData.video_url}
+                  onChange={(e) => handleInputChange('video_url', e.target.value)}
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/video.mp4"
+                />
               </label>
-              <input
-                type="url"
-                value={formData.video_url}
-                onChange={(e) => handleInputChange('video_url', e.target.value)}
-                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/video.mp4"
-              />
             </div>
           </div>
 
           {/* Remarks */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Remark
+            <label>
+              <span className="block text-sm font-medium text-foreground mb-2">
+                Remark
+              </span>
+              <textarea
+                rows={2}
+                value={formData.remark}
+                onChange={(e) => handleInputChange('remark', e.target.value)}
+                className="max-h-[5vh] overflow-y-clip w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                placeholder="Enter any remarks"
+              />
             </label>
-            <textarea
-              rows={2}
-              value={formData.remark}
-              onChange={(e) => handleInputChange('remark', e.target.value)}
-              className="max-h-[5vh] overflow-y-clip w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              placeholder="Enter any remarks"
-            />
           </div>
 
           {/* Buttons */}
@@ -352,7 +381,7 @@ const AddProjectModal = ({ isOpen, onClose, onProjectAdded }: AddProjectModalPro
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors"
+              className="flex-1 px-4 py-2 bg-muted hover:bg-muted/70 text-foreground hover:text-destructive rounded-lg transition-colors"
               disabled={isLoading}
             >
               Cancel

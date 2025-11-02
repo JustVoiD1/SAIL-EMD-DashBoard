@@ -278,13 +278,13 @@
 
   * {
     transition:
-      background-color 0.5s ease-in-out,
-      border-color 0.5s ease-in-out,
-      color 0.5s ease-in-out,
-      fill 0.5s ease-in-out,
-      stroke 0.5s ease-in-out,
-      backdrop-filter 0.5s ease-in-out,
-      box-shadow 0.5s ease-in-out;
+      background-color 0.3s ease-in-out,
+      border-color 0.3s ease-in-out,
+      color 0.3s ease-in-out,
+      fill 0.3s ease-in-out,
+      stroke 0.3s ease-in-out,
+      backdrop-filter 0.3s ease-in-out,
+      box-shadow 0.3s ease-in-out;
   }
 
   /* Date input color scheme fixes */

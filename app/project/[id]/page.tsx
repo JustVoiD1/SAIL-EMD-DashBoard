@@ -269,7 +269,7 @@ const Page = () => {
         project={project}
       />
       <ProjectSideBar
-      className=" h-full bg-card sticky top-0 right-0 col-span-4 max-h-[75vh] border border-border rounded-lg p-4"
+      className=" min-h-screen bg-card sticky top-0 right-0 col-span-4 max-h-[75vh] border border-border rounded-lg p-4"
         id={id}
         project={project}
       />

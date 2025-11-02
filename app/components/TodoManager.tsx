@@ -113,7 +113,7 @@ const TodoManager = ({ projectId, className }: TodoManagerProps) => {
                 setTodos(prevTodos =>
                     prevTodos.map(t => t.id === currTodo.id ? data.todo : t)
                 );
-                
+
             }
             else {
                 setTodos(prevTodos => prevTodos.filter(t => t.id !== currTodoId));
@@ -234,9 +234,9 @@ const TodoManager = ({ projectId, className }: TodoManagerProps) => {
 
     const deleteTodo = async (todoId: number) => {
         const wish = window.confirm('Are you sure you want to delete the todo? this action cannot be undone.')
-        if(!wish) return;
+        if (!wish) return;
         const todoToDelete = todos.find(t => t.id === todoId)
-        if(!todoToDelete) return;
+        if (!todoToDelete) return;
         try {
             setTodos(prevTodos => prevTodos.filter(t => t.id !== todoId))
             const token = localStorage.getItem('token');
@@ -250,13 +250,13 @@ const TodoManager = ({ projectId, className }: TodoManagerProps) => {
             if (!response.ok) {
                 // setTodos(todos.filter(t => t.id !== todoId));
                 toast.error('Failed to delete todo')
-                setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
-                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            ));
+                setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) =>
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                ));
             }
         } catch (err) {
             console.error('Error deleting todo: ', err);
-            setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) => 
+            setTodos(prevTodos => [...prevTodos, todoToDelete].sort((a, b) =>
                 new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             ));
             toast.error('Failed to delete todo')
@@ -299,28 +299,36 @@ const TodoManager = ({ projectId, className }: TodoManagerProps) => {
                     <h4 className="text-md font-medium mb-4">Add New Todo</h4>
                     <form onSubmit={handleAddTodo} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1">Title</label>
-                            <input
-                                type="text"
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-3 py-2 border border-border rounded-lg"
-                                placeholder="Enter todo title"
-                                required
-                            />
+                            <label>
+                                <span className="block text-sm font-medium mb-1">Title</span>
+                                <input
+                                    type="text"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full px-3 py-2 border border-border rounded-lg"
+                                    placeholder="Enter todo title"
+                                    required
+                                />
+                            </label>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Description</label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full px-3 py-2 border border-border rounded-lg"
-                                placeholder="Enter description (optional)"
-                                rows={3}
-                            />
+                            <label>
+
+                                <span className="block text-sm font-medium mb-1">Description</span>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full px-3 py-2 border border-border rounded-lg"
+                                    placeholder="Enter description (optional)"
+                                    rows={3}
+                                />
+                            </label>
+
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Priority</label>
+                            <label>
+
+                            <span className="block text-sm font-medium mb-1">Priority</span>
                             <Select
                                 value={formData.priority}
                                 onValueChange={(value) => setFormData({ ...formData, priority: value as 'low' | 'medium' | 'high' })}
@@ -336,15 +344,21 @@ const TodoManager = ({ projectId, className }: TodoManagerProps) => {
                                     <SelectItem value="high">High</SelectItem>
                                 </SelectContent>
                             </Select>
+                            </label>
+
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1">Due Date</label>
+                            <label>
+
+                            <span className="block text-sm font-medium mb-1">Due Date</span>
                             <input
                                 type="date"
                                 value={formData.due_date}
                                 onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                                 className="w-full px-3 py-2 border border-border rounded-lg"
                             />
+                            </label>
+
                         </div>
                         <div className="flex gap-2">
                             <button
