@@ -20,7 +20,7 @@ JWT_SECRET=your_jwt_secret
 ```bash
 npm run dev
 ```
-- You will get both a `localhost:PORT` url and a `NETWORKURL:PORT` url.
+- You will get both `localhost:PORT` url and a `NETWORKURL:PORT` url.
 - You can use the `NETWORKURL:PORT` in different client machines to access the Dashboard web application connected to the same network with the machine running the server
 
-- This projet is made by [JustVoiD1](https://github.com/JustVoiD1) with ❤️
+- This project is made by [JustVoiD1](https://github.com/JustVoiD1) with ❤️
